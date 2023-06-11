@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>青芽医疗</title>
+    <style type="text/css">
+        .el-header {
+            background-color: #545c64;
+        }
+
+        .header-img {
+            width: 100px;
+            margin-top: 20px;
+        }
+
+        .face {
+            margin-top: 5px;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+        }
+        .el-dropdown-link {
+            cursor: pointer;
+            color: whitesmoke;
+            line-height: 60px;
+        }
+        .el-icon-arrow-down {
+            font-size: 12px;
+        }
+        .text{
+            float: right;
+        }
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 78px;
+            height: 78px;
+            line-height: 78px;
+            text-align: center;
+        }
+        .avatar {
+            width: 78px;
+            height: 78px;
+            display: block;
+        }
+    </style>
+    <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+    <script src="js/vue.js"></script>
+    <script src="element-ui/lib/index.js"></script>
+	<script src="js/axios-0.18.0.js"></script>
+</head>
+<body>
+<div id="div">
+    <el-container>
+        <!--头部区域-->
+        <el-header class="el-header" style="height: 60px">
+            <!--水平排列，根据el-container的特点，添加该组件-->
+            <el-container>
+                <!--logo图片-->
+                <div>
+                    <el-image src="img/export.png" class="header-img"></el-image>
+                    <div style="margin-top: 20px;float: left;float: right;color: white;font-family: 微软雅黑">青芽医疗管理系统</div>
+                </div>
+                <!--顶部导航-->
+                <el-dropdown style="margin-left: auto;padding-right: 20px">
+                         <span class="el-dropdown-link">
+                             <img src="img/face.png" class="face"/>
+                             <div class="text">管理员：{{userObj.account}}<i class="el-icon-arrow-down el-icon--right"></i></div>
+                          </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item @click.native="showEditUserView()">个人设置</el-dropdown-item>
+                        <el-dropdown-item divided @click.native="logout()">注销退出</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </el-container>
+        </el-header>
+        <el-container style="height: 580px; border: 1px solid #eee">
+            <!--侧边栏区域-->
+            <el-aside width="200px" style="background-color: rgb(238, 241, 246)" id="aside">
+                <el-menu :default-openeds="['1','2','3']">
+                    <el-submenu index="1">
+                        <template slot="title"><i class="el-icon-menu"></i>用户管理</template>
+                        <el-menu-item-group>
+                            <el-menu-item index="1-1" @click="toHtml('userList.html')">
+                                <i class="el-icon-help"></i>用户列表
+                            </el-menu-item>
+                            <el-menu-item index="1-2"  @click="toHtml('addUser.html')">
+                                <i class="el-icon-help"></i>添加用户</el-menu-item>
+                        </el-menu-item-group>
+                    </el-submenu>
+                    <el-submenu index="2">
+                        <template slot="title"><i class="el-icon-menu"></i>挂号管理</template>
+                        <el-menu-item-group>
+                            <el-menu-item index="2-1" @click="toHtml('addPatient.html')">
+                                <i class="el-icon-help"></i>创建就诊卡
+                            </el-menu-item>
+                            <el-menu-item index="2-2" @click="toHtml('addRegistry.html')"><i class="el-icon-help"></i>门诊挂号
+                            </el-menu-item>
+                            <el-menu-item index="2-3" @click="toHtml('registryList.html')"><i class="el-icon-help"></i>挂号信息
+                            </el-menu-item>
+                        </el-menu-item-group>
+                    </el-submenu>
+                    <el-submenu index="3">
+                        <template slot="title"><i class="el-icon-menu"></i>门诊管理</template>
+                        <el-menu-item-group>
+                            <el-menu-item index="3-1" @click="toHtml('diagnosticList.html')">
+                                <i class="el-icon-help"></i>就诊信息
+                            </el-menu-item>
+                        </el-menu-item-group>
+                    </el-submenu>
+                </el-menu>
+            </el-aside>
+            <!--主区域-->
+            <el-container>
+                <el-main>
+                    <iframe id="myframe" false="false" :src="iframeSrc" scrolling="none" frameborder="0"
+                            style="top:80px;left: 120px; width: 100%;height:600px"></iframe>
+                </el-main>
+            </el-container>
+            <!--编辑用户信息-->
+            <el-dialog title="编辑个人信息" :visible.sync="dialogFormVisible" width="40%">
+                <el-form :model="userForm" :rules="rules" ref="userForm" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="用户名" prop="userName">
+                        <el-input v-model="userForm.userName" disabled size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="userForm.password" size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item label="确认密码" prop="checkPass">
+                        <el-input type="password" v-model="userForm.checkPass" size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item label="用户图像" prop="headUrl">
+                        <el-upload
+                                size="mini"
+                                class="avatar-uploader"
+                                action="https://jsonplaceholder.typicode.com/posts/"
+                                :show-file-list="false"
+                                :on-success="handleAvatarSuccess"
+                                :before-upload="beforeAvatarUpload">
+                            <img v-if="userForm.headUrl" :src="userForm.headUrl" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="submitForm('userForm')" size="mini">修改</el-button>
+                        <el-button @click="resetForm('userForm')" size="mini">返回</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+        </el-container>
+    </el-container>
+</div>
+</body>
+<script type="application/javascript">
+    new Vue({
+            el: '#div',
+            data: {
+                userObj:null,
+                dialogFormVisible:false,
+                userForm: {
+                    account: '',
+                    userName: '',
+                    password: '',
+                    checkPass: '',
+                    userType: '',
+                    headUrl: '',
+					roleName:''
+                },
+                rules: {
+                    password: [
+                        { required: true, message: '密码不能为空', trigger: 'blur' }
+                    ],
+                    checkPass: [
+                        { required: true, message: '密码不能为空', trigger: 'blur' }
+                    ]
+                },
+                url: 'img/img.jpg',
+                iframeSrc: 'welcome.html'
+            },
+            mounted:function (){//加载事件
+                //1.从localStorage对象获取保存的信息
+                //将json字符串转化为json对象：JSON.parse(json字符串)
+                console.log(localStorage.getItem("userInfo"));
+                this.userObj = JSON.parse(localStorage.getItem("userInfo"));
+            },
+            methods: {
+                toHtml(page){
+                    this.iframeSrc = page;
+                },
+                showEditUserView(){
+                    this.userForm.userName = this.userObj.userName;
+                    this.userForm.password = this.userObj.password;
+                    this.dialogFormVisible = true;
+                },
+                logout(){
+                    //请求后台，在Servlet中注销用户
+                    //跳转到登录页面
+                    location.href='login.html';
+                },
+                //上传成功
+                handleAvatarSuccess(res, file) {
+                    this.userForm.headUrl = URL.createObjectURL(file.raw);
+                },
+                //上传前准备
+                beforeAvatarUpload(file) {
+                    const isJPG = file.type === 'image/jpeg';
+                    const isLt2M = file.size / 1024 / 1024 < 2;
+
+                    if (!isJPG) {
+                        this.$message.error('上传头像图片只能是 JPG 格式!');
+                    }
+                    if (!isLt2M) {
+                        this.$message.error('上传头像图片大小不能超过 2MB!');
+                    }
+                    return isJPG && isLt2M;
+                },
+                submitForm(formName) {
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            alert('submit!');
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                },
+                resetForm(formName) {
+                    this.$refs[formName].resetFields();
+                    this.dialogFormVisible=false;
+                },
+            }
+        }
+    );
+</script>
+</html>

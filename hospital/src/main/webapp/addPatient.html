@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增用户</title>
+    <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+    <script src="js/vue.js"></script>
+    <script src="element-ui/lib/index.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+    <style>
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 78px;
+            height: 78px;
+            line-height: 78px;
+            text-align: center;
+        }
+        .avatar {
+            width: 78px;
+            height: 78px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div id="div">
+    <h4>创建就诊卡</h4>
+    <el-form :model="patientForm" :rules="rules" ref="patientForm" label-width="100px">
+        <el-form-item label="病人姓名" prop="name">
+            <el-input v-model="patientForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+            <el-input v-model="patientForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="家庭地址" prop="address">
+            <el-input  v-model="patientForm.address"></el-input>
+        </el-form-item>
+        <el-form-item label="医保卡号" prop="idMedicare">
+            <el-input  v-model="patientForm.idMedicare"></el-input>
+        </el-form-item>
+        <el-form-item label="身份证号" prop="idCard">
+            <el-input  v-model="patientForm.idCard"></el-input>
+        </el-form-item>
+        <el-form-item label="出生日期" prop="birthday">
+            <el-input v-model="patientForm.birthday" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item label="性别" prop="sex">
+            <el-select v-model="patientForm.sex" disabled placeholder="请选择">
+                <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="submitForm('patientForm')">保存</el-button>
+            <el-button @click="resetForm('patientForm')">返回</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+</body>
+<script type="application/javascript">
+    new Vue({
+            el: '#div',
+            data: {
+                patientForm: {
+                    name: '',
+                    phone: '',
+                    address: '',
+                    isMedicare:2,
+                    idMedicare: '',
+                    idCard: '',
+                    birthday: '',
+                    sex:1
+                },
+                options: [{value: 1, label: '女'}, {value: 2, label: '男'}],
+                rules: {
+                    name: [
+                        { required: true, message: '病人姓名不能为空', trigger: 'blur' }
+                    ],
+                    phone: [
+                        { required: true, message: '手机不能为空', trigger: 'blur' }
+                    ],
+                    address: [
+                        { required: true, message: '家庭地址不能为空', trigger: 'blur' }
+                    ],
+                    idCard: [
+                        { required: true, message: '身份证号不能为空', trigger: 'blur' }
+                    ]
+                }
+            },
+            methods: {
+                submitForm(formName) {
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            alert('submit!');
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                },
+                resetForm(formName) {
+                    this.$refs[formName].resetFields();
+                }
+            }
+        }
+    );
+</script>
+</html>

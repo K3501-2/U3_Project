@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+    <script src="js/vue.js"></script>
+    <script src="element-ui/lib/index.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+    <style type="text/css">
+        .el-form-item {
+            display: inline-block !important;
+            float: left;
+            width: 400px;
+        }
+        .el-dialog__body {
+            padding: 5px 30px;
+        }
+    </style>
+</head>
+<body>
+<div id="div">
+    <b style="font-size: 15px;">挂号信息管理</b>
+    <div style="margin-top: 30px;margin-bottom: 20px;padding-left: 10px">
+        <el-row>
+            <el-col :span=5>
+                身份证号:
+                <el-input v-model="searchForm.idCard" size="mini" style="width: 180px"></el-input>
+            </el-col>
+            <el-col :span=4>
+                挂号医师:
+                <el-select v-model="searchForm.userId" placeholder="请选择" size="mini" style="width: 130px">
+                    <el-option
+                            v-for="item in docterList"
+                            :key="item.id"
+                            :label="item.userName"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col :span=5>
+                挂号单状态:
+                <el-select v-model="searchForm.status" placeholder="请选择" size="mini" style="width: 130px">
+                    <el-option
+                            v-for="item in statusList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col :span=4>
+                <el-button type="primary" @click="getRegistryListByPage()" size="mini" style="width: 100px">查询
+                </el-button>
+            </el-col>
+        </el-row>
+    </div>
+    <el-table :data="tableData">
+        <el-table-column prop="id" label="挂号单编号" width="90">
+        </el-table-column>
+        <el-table-column prop="patient.name" label="病人姓名" width="90">
+        </el-table-column>
+        <el-table-column prop="patient.sex" :formatter="sexParse" label="性别" width="50">
+        </el-table-column>
+        <el-table-column prop="patient.idCard" label="身份证号" width="200">
+        </el-table-column>
+        <el-table-column prop="department.name" label="就诊科室" width="120">
+        </el-table-column>
+        <el-table-column prop="user.userName" label="挂号医师" width="100">
+        </el-table-column>
+        <el-table-column prop="registryTime" label="挂号时间" width="160">
+        </el-table-column>
+        <el-table-column prop="createdTime" label="创建时间" width="160">
+        </el-table-column>
+        <el-table-column prop="status" :formatter="statusParse" label="挂号单状态" width="150">
+        </el-table-column>
+        <el-table-column label="操作" width="240">
+            <template slot-scope="scope">
+                <el-button type="info" v-show="scope.row.status==2" size="mini" @click="startDiagnostic(scope.$index, scope.row)">开始问诊</el-button>
+                <el-button type="info" size="mini" @click="detailRegistry(scope.$index, scope.row)">查看详情</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pagination.currentPage"
+            :page-sizes="[6, 8, 10]"
+            :page-size="pagination.pageSizes"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pagination.total">
+    </el-pagination>
+    <!--挂号单详情-->
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="70%">
+        <h4>病人信息</h4>
+        <el-form :model="form" size="mini">
+            <el-form-item label="姓名" :label-width="formLabelWidth">
+                <el-input v-model="form.name" autocomplete="off" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="身份证号" :label-width="formLabelWidth">
+                <el-input v-model="form.idCard" autocomplete="off" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="性别" :label-width="formLabelWidth">
+                <el-input v-model="form.sex" autocomplete="off" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="出生日期" :label-width="formLabelWidth">
+                <el-input v-model="form.birthday" autocomplete="off" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="家庭住址" :label-width="formLabelWidth">
+                <el-input v-model="form.address" autocomplete="off" disabled></el-input>
+            </el-form-item>
+            <div v-show="isVisible">
+                <hr class="input_width" style="width: 90%"/>
+                <h4>挂号信息</h4>
+                <el-form-item label="挂号单编号" :label-width="formLabelWidth">
+                    <el-input v-model="form.registryId" autocomplete="off" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="就诊科室" :label-width="formLabelWidth">
+                    <el-input v-model="form.departmentName" autocomplete="off" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="就诊房间" :label-width="formLabelWidth">
+                    <el-input v-model="form.roomName" autocomplete="off" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="挂号医师" :label-width="formLabelWidth">
+                    <el-input v-model="form.medicalAdvice.user.userName" autocomplete="off" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="就诊时间" :label-width="formLabelWidth">
+                    <el-input v-model="form.consultationTime" autocomplete="off" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="挂号时间" :label-width="formLabelWidth">
+                    <el-input v-model="form.registryTime" autocomplete="off" disabled></el-input>
+                </el-form-item>
+            </div>
+            <hr class="input_width" style="width: 90%"/>
+            <h4>{{msg}}</h4>
+            <el-form-item label="病人主诉" style="width: 750px;clear:left;" :label-width="formLabelWidth">
+                <el-input v-model="form.medicalAdvice.chiefComplaint" type="textarea" :rows="4" autocomplete="off" :disabled="isVisible"></el-input>
+            </el-form-item>
+            <el-form-item label="诊断结果" style="width: 750px;clear:left;" :label-width="formLabelWidth">
+                <el-input v-model="form.medicalAdvice.diagnosis" type="textarea" :rows="4" autocomplete="off" :disabled="isVisible"></el-input>
+            </el-form-item>
+            <el-form-item label="就诊医师" :label-width="formLabelWidth">
+                <el-input v-model="form.user.userName" autocomplete="off" disabled></el-input>
+            </el-form-item>
+        </el-form>
+        <div style="height: 250px"></div>
+        <div slot="footer" class="dialog-footer" style="text-align: center">
+            <el-button type="primary" @click="addMedicalAdvice()" v-show="!isVisible" size="mini">添加医嘱</el-button>
+            <el-button type="primary" @click="stopDiagnostic()" v-show="!isVisible" size="mini">问诊结束</el-button>
+            <el-button type="primary" @click="closeDialog()" size="mini">返 回</el-button>
+        </div>
+    </el-dialog>
+</div>
+</body>
+<script type="application/javascript">
+    new Vue({
+            el: '#div',
+            data: {
+                title:'查看挂号单信息',
+                msg:'医嘱信息',
+                isVisible:true,
+                searchForm: {
+                    departmentId: '',
+                    patientId: '',
+                    idCard: '',
+                    userId: '',
+                    status: ''
+                },
+                docterList: [
+                    {id: 1, userName: '张医生'},
+                    {id: 2, userName: '李医生'},
+                    {id: 3, userName: '赵医生'}
+                ],
+                statusList: [
+                    {id: 1, name: '已挂号，未问诊'},
+                    {id: 2, name: '正在问诊'},
+                    {id: 3, name: '结束问诊'}
+                ],
+                departmentList: [
+                    {id: 1, name: '门诊内科'},
+                    {id: 2, name: '门诊外科'},
+                    {id: 3, name: '门诊儿科'},
+                    {id: 4, name: '门诊眼科'},
+                    {id: 5, name: '门诊口腔科'}
+                ],
+                tableData: [
+                    {
+                        id: '1',
+                        patient: {
+                            id: 1,
+                            name: '病人2',
+                            sex: 1,
+                            address: '武汉市蔡甸区马路村19号8栋11楼401',
+                            phone: '15927403749',
+                            idCard: '42900619790313543X',
+                            birthday: '2012-01-13'
+                        },
+                        department: {
+                            departmentId: 1,
+                            name: '消化内科'
+                        },
+                        user: {    /*挂号医师*/
+                            userId: 10,
+                            userName: '赵医师',
+                        },
+                        registryTime: '2020-05-26 11:36:06',
+                        createdTime: '2020-05-26 11:36:06',
+                        consultationTime: '2020-05-26 11:36:06',/*就诊时间*/
+                        status: 1,
+                        room: {
+                            id: 1,
+                            name: 'A202'
+                        }
+                    },
+                    {
+                        id: '2',
+                        patient: {
+                            id: 1,
+                            name: '病人3',
+                            sex: 1,
+                            address: '武汉市蔡甸区马路村19号8栋11楼401',
+                            phone: '15927403749',
+                            idCard: '42900619790313543X',
+                            birthday: '2012-01-13'
+                        },
+                        department: {
+                            departmentId: 1,
+                            name: '消化内科'
+                        },
+                        user: {    /*挂号医师*/
+                            userId: 12,
+                            userName: '张医师',
+                        },
+                        registryTime: '2020-05-26 11:36:06',
+                        createdTime: '2020-05-26 11:36:06',
+                        consultationTime: '2020-05-26 11:36:06',/*就诊时间*/
+                        status: 2,
+                        room: {
+                            id: 2,
+                            name: 'A203'
+                        }
+                    },
+                    {
+                        id: '3',
+                        patient: {
+                            id: 1,
+                            name: '病人3',
+                            sex: 2,
+                            address: '武汉市蔡甸区马路村19号8栋11楼401',
+                            phone: '15927403749',
+                            idCard: '42900619790313543X',
+                            birthday: '2012-01-14'
+                        },
+                        department: {
+                            departmentId: 1,
+                            name: '消化内科'
+                        },
+                        user: {    /*挂号医师*/
+                            userId: 10,
+                            userName: '赵医师',
+                        },
+                        registryTime: '2020-05-26 11:36:06',
+                        createdTime: '2020-05-26 11:36:06',
+                        consultationTime: '2020-05-26 11:36:06',/*就诊时间*/
+                        status: 3,
+                        room: {
+                            id: 2,
+                            name: 'A204'
+                        }
+                    },
+                    {
+                        id: '4',
+                        patient: {
+                            id: 5,
+                            name: '病人5',
+                            sex: 1,
+                            address: '武汉市蔡甸区马路村19号8栋11楼401',
+                            phone: '15927403749',
+                            idCard: '42900619790313543X',
+                            birthday: '2012-01-13'
+                        },
+                        department: {
+                            departmentId: 1,
+                            name: '消化内科'
+                        },
+                        user: {    /*挂号医师*/
+                            userId: 10,
+                            userName: '赵医师',
+                        },
+                        registryTime: '2020-05-26 11:36:06',
+                        createdTime: '2020-05-26 11:36:06',
+                        consultationTime: '2020-05-26 11:36:06',/*就诊时间*/
+                        status: 1,
+                        room: {
+                            id: 1,
+                            name: 'A202'
+                        }
+                    }
+                ],
+                pagination: {
+                    currentPage: 1,
+                    pageSize: 6,
+                    total: 9
+                },
+                dialogFormVisible: false,
+                form: {
+                    registryId:'',
+                    name: '',
+                    idCard: '',
+                    sex: 1,
+                    birthday: '',
+                    address:'',
+                    departmentName:'',
+                    roomName:'',
+                    user: {    /*挂号医师*/
+                        userId: 10,/*就诊医师用户ID*/
+                        userName: '林医师',
+                    },
+                    consultationTime:'',
+                    registryTime:'',
+                    medicalAdvice:{
+                        id:'', /*医嘱编号*/
+                        registryId:'',/*挂号单表主键ID*/
+                        user: {    /*挂号医师*/
+                            userId: 20,/*就诊医师用户ID*/
+                            userName: '张医师',
+                        },
+                        chiefComplaint:'肚子疼，头疼，37.5°，持续时间1天', /*病人主诉*/
+                        diagnosis:'肠胃炎'/*诊断情况*/
+                    }
+                },
+                formLabelWidth: '120px'
+            },
+            methods: {
+                addMedicalAdvice(){
+
+                },
+                stopDiagnostic(){
+
+                },
+                closeDialog(){
+                    this.dialogFormVisible = false;
+                    this.isVisible=true;
+                    this.title="查看挂号单信息";
+                    this.msg="医嘱信息";
+                },
+                startDiagnostic(index, row){
+                    this.dialogFormVisible = true;
+                    this.isVisible=false;
+                    this.title="疾病问诊";
+                    this.msg="添加医嘱";
+                    this.form.name=row.patient.name;
+                    this.form.idCard=row.patient.idCard;
+                    this.form.sex=row.patient.sex;
+                    this.form.address=row.patient.address;
+                    this.form.birthday=row.patient.birthday;
+                    this.form.registryId=row.id;
+                    this.form.departmentName=row.department.name;
+                    this.form.roomName=row.room.name;
+                    this.form.userName=row.user.userName;
+                    this.form.consultationTime=row.consultationTime;
+                    this.form.registryTime=row.registryTime;
+                },
+                getRegistryListByPage() {
+
+                },
+                detailRegistry(index, row) {
+                    this.dialogFormVisible = true;
+
+                    this.form.name=row.patient.name;
+                    this.form.idCard=row.patient.idCard;
+                    this.form.sex=row.patient.sex;
+                    this.form.address=row.patient.address;
+                    this.form.birthday=row.patient.birthday;
+                    this.form.registryId=row.id;
+                    this.form.departmentName=row.department.name;
+                    this.form.roomName=row.room.name;
+                    this.form.userName=row.user.userName;
+                    this.form.consultationTime=row.consultationTime;
+                    this.form.registryTime=row.registryTime;
+                },
+                sexParse(row, column, cellValue) {
+                    let str = '';
+                    switch (cellValue) {
+                        case 1:
+                            str = "男";
+                            break;
+                        case 2:
+                            str = "女";
+                            break;
+                    }
+                    return str;
+                },
+                statusParse(row, column, cellValue) {
+                    let str = '';
+                    switch (cellValue) {
+                        case 1:
+                            str = "已挂号，未问诊";
+                            break;
+                        case 2:
+                            str = "正在问诊";
+                            break;
+                        case 3:
+                            str = "问诊结束";
+                            break;
+                    }
+                    return str;
+                },
+                //功能：改变查询每页显示的条数，pagination组件会自动传递选择的pageSize
+                handleSizeChange(pageSize) {
+                    this.pagination.pageSize = pageSize;
+
+                },
+                //功能：翻页查询，pagination组件会自动传递当前页号currentPage
+                handleCurrentChange(currentPage) {
+                    this.pagination.currentPage = currentPage;
+
+                }
+            }
+        }
+    );
+</script>
+</html>

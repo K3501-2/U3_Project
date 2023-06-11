@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增用户</title>
+    <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+    <script src="js/vue.js"></script>
+    <script src="element-ui/lib/index.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+    <style>
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 78px;
+            height: 78px;
+            line-height: 78px;
+            text-align: center;
+        }
+        .avatar {
+            width: 78px;
+            height: 78px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div id="div">
+    <h4>挂号</h4>
+    <el-form :model="registerForm" size="mini" :rules="rules" ref="registerForm" label-width="100px">
+        <el-form-item label="身份证号" prop="idCard">
+            <el-input  v-model="registerForm.patient.idCard"></el-input>
+        </el-form-item>
+        <el-form-item label="病人姓名" prop="name">
+            <el-input v-model="registerForm.patient.name" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+            <el-input v-model="registerForm.patient.phone" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="出生日期" prop="birthday">
+            <el-input v-model="registerForm.patient.birthday" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop="sex">
+            <el-input v-model="registerForm.patient.sex" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="家庭地址" prop="address">
+            <el-input  v-model="registerForm.patient.address"></el-input>
+        </el-form-item>
+        <el-form-item label="就诊科室" prop="departmentId">
+            <el-select v-model="registerForm.departmentId"  placeholder="请选择">
+                <el-option
+                        v-for="item in departmentList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                </el-option>
+            </el-select>
+        </el-form-item>
+
+        <el-form-item label="时间段" prop="sign">
+            <el-select v-model="registerForm.sign"  placeholder="请选择" @change="selectsign()">
+                <el-option
+                        v-for="item in signList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                </el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="就诊医师" prop="userId">
+            <el-select v-model="registerForm.userId"  placeholder="请选择" @change="selectDoctor()">
+                <el-option
+                        v-for="item in docterList"
+                        :key="item.id"
+                        :label="item.userName"
+                        :value="item.id">
+                </el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="就诊房间" prop="roomId" v-if="registerForm.userId!=''">
+            <el-input v-model="registerForm.room.name"></el-input>
+        </el-form-item>
+
+        <el-form-item label="是否医保" prop="isMedicare">
+            <el-radio-group v-model="registerForm.isMedicare" @change="selectMedicare">
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="2">否</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item label="医保卡号" prop="idMedicare" v-if="registerForm.userId!=''&&this.registerForm.isMedicare==1">
+            <el-input  v-model="registerForm.idMedicare"></el-input>
+        </el-form-item>
+        <el-form-item label="挂号总金额" prop="fee" v-if="registerForm.userId!=''">
+            <el-input v-model="registerForm.fee" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="医保报销额" prop="medicareFee" v-if="registerForm.userId!=''">
+            <el-input v-model="registerForm.medicareFee" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="实际应支付" prop="payFee" v-if="registerForm.userId!=''">
+            <el-input v-model="registerForm.payFee" disabled></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="submitForm('registerForm')">保存</el-button>
+            <el-button @click="resetForm('registerForm')">返回</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+</body>
+<script type="application/javascript">
+    new Vue({
+            el: '#div',
+            data: {
+                registerForm: {
+                    /*病人信息*/
+                    patient:{
+                        idCard: '42900619790313543X',
+                        name: 'xxx',
+                        phone: '15927403749',
+                        birthday: '2015-02-03',
+                        sex:1,
+                        address: '江夏区纸坊街'
+                    },
+                    patientId:0, /*病人ID*/
+                    departmentId:'',/*就诊科室*/
+                    sign:'',
+                    userId:'',/*就诊医生*/
+                    scheduleId:0,/*排期编号*/
+                    isMedicare:2,/*是否医保*/
+                    room:{
+                        id:1,
+                        name:'A201'
+                    },
+                    idMedicare: '',/*医保卡号*/
+                    status:1, /*1-->已挂号，未问诊；2-->正在问诊；3-->问诊结束',*/
+                    fee:50, /*挂号总金额(￥)*/
+                    payFee:10,/*实际应支付*/
+                    medicareFee:40,/*医保报销费*/
+                },
+                departmentList:[
+                    {id: 1, name: '门诊内科'},
+                    {id: 2, name: '门诊外科'},
+                    {id: 3, name: '门诊儿科'},
+                    {id: 4, name: '门诊眼科'},
+                    {id: 5, name: '门诊口腔科'}
+                ],
+                signList:[
+                    {id: 1, name: '上午'},
+                    {id: 2, name: '下午'}
+                ],
+                docterList:[
+                    {id: 1, userName: '张医生'},
+                    {id: 2, userName: '李医生'},
+                    {id: 3, userName: '赵医生'}
+                ],
+                rules: {
+                    name: [
+                        { required: true, message: '病人姓名不能为空', trigger: 'blur' }
+                    ],
+                    phone: [
+                        { required: true, message: '手机不能为空', trigger: 'blur' }
+                    ],
+                    address: [
+                        { required: true, message: '家庭地址不能为空', trigger: 'blur' }
+                    ],
+                    idCard: [
+                        { required: true, message: '身份证号不能为空', trigger: 'blur' }
+                    ]
+                }
+            },
+            methods: {
+                //选择时间段
+                selectsign(){
+                    alert("编码时通过时间段:"+this.registerForm.sign+"和科室编号:"+this.registerForm.departmentId+"发送Ajax加载医师");
+                },
+                //选择是否医保
+                selectMedicare(){
+                    if(this.registerForm.isMedicare==1){
+                        this.registerForm.medicareFee=40;
+                    }else if(this.registerForm.isMedicare==2){
+                        this.registerForm.medicareFee=0;
+                    }
+                    this.registerForm.payFee=this.registerForm.fee-this.registerForm.medicareFee;
+                },
+                //选择医师
+                selectDoctor(){
+                    alert("实际编码，查询医师房间号,初始化房间信息");
+                },
+                submitForm(formName) {
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            alert('submit!');
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                },
+                resetForm(formName) {
+                    this.$refs[formName].resetFields();
+                }
+            }
+        }
+    );
+</script>
+</html>

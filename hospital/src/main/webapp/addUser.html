@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增用户</title>
+    <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+    <script src="js/vue.js"></script>
+    <script src="element-ui/lib/index.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+    <style>
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 78px;
+            height: 78px;
+            line-height: 78px;
+            text-align: center;
+        }
+        .avatar {
+            width: 78px;
+            height: 78px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div id="div">
+    <h4>新增用户信息</h4>
+    <el-form :model="userForm" :rules="rules" ref="userForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="账号" prop="account">
+            <el-input v-model="userForm.account"></el-input>
+        </el-form-item>
+        <el-form-item label="用户名" prop="userName">
+            <el-input v-model="userForm.userName"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+            <el-input type="password" v-model="userForm.password"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="checkPass">
+            <el-input type="password" v-model="userForm.checkPass"></el-input>
+        </el-form-item>
+
+        <el-form-item label="用户类型" prop="userType">
+            <el-select v-model="userForm.userType" placeholder="--请选择--">
+                <el-option label="挂号员" value="2"></el-option>
+                <el-option label="收银员" value="4"></el-option>
+                <el-option label="系统管理员" value="1"></el-option>
+                <el-option label="药房医师" value="5"></el-option>
+                <el-option label="门诊医师" value="3"></el-option>
+            </el-select>
+        </el-form-item>
+		<el-form-item label="就诊科室" prop="departmentId" v-if="userForm.userType==3">
+            <el-select v-model="userForm.departmentId"  placeholder="请选择">
+                <el-option
+                        v-for="item in departmentList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                </el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="用户图像" prop="region">
+            <el-upload
+                    class="avatar-uploader"
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload">
+                <img v-if="userForm.headUrl" :src="userForm.headUrl" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="submitForm('userForm')">保存</el-button>
+            <el-button @click="resetForm('userForm')">返回</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+</body>
+<script type="application/javascript">
+    new Vue({
+            el: '#div',
+            data: {
+                departmentList:[
+                    {id: 1, name: '门诊内科'},
+                    {id: 2, name: '门诊外科'},
+                    {id: 3, name: '门诊儿科'},
+                    {id: 4, name: '门诊眼科'},
+                    {id: 5, name: '门诊口腔科'}
+                ],
+                userForm: {
+                    account: '',
+                    userName: '',
+                    password: '',
+                    checkPass: '',
+                    userType: '',
+                    headUrl: '',
+                    departmentId:''
+                },
+                rules: {
+                    account: [
+                        { required: true, message: '账号名不能为空', trigger: 'blur' }
+                    ],
+                    userName: [
+                        { required: true, message: '用户名不能为空', trigger: 'blur' }
+                    ],
+                    password: [
+                        { required: true, message: '密码不能为空', trigger: 'blur' }
+                    ],
+                    checkPass: [
+                        { required: true, message: '密码不能为空', trigger: 'blur' }
+                    ],
+                    userType: [
+                        { required: true, message: '请选择用户类型', trigger: 'change' }
+                    ]
+                }
+            },
+            methods: {
+                submitForm(formName) {
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            alert('submit!');
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                },
+                resetForm(formName) {
+                    this.$refs[formName].resetFields();
+                },
+                //上传成功
+                handleAvatarSuccess(res, file) {
+                    this.userForm.headUrl = URL.createObjectURL(file.raw);
+                },
+                //上传前准备
+                beforeAvatarUpload(file) {
+                    const isJPG = file.type === 'image/jpeg';
+                    const isLt2M = file.size / 1024 / 1024 < 2;
+
+                    if (!isJPG) {
+                        this.$message.error('上传头像图片只能是 JPG 格式!');
+                    }
+                    if (!isLt2M) {
+                        this.$message.error('上传头像图片大小不能超过 2MB!');
+                    }
+                    return isJPG && isLt2M;
+                }
+            }
+        }
+    );
+</script>
+</html>
