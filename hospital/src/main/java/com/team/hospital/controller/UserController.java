@@ -115,9 +115,9 @@ public class UserController {
         //调用业务实现添加
         int result = this.userService.addUser(users);
         if(result > 0){
-            return new Result("1","添加用户成功");
+            return new Result("1000","添加用户成功");
         } else {
-            return new Result("0","添加用户失败");
+            return new Result("1001","添加用户失败");
         }
     }
 }
