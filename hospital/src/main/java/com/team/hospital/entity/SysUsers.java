@@ -1,5 +1,7 @@
 package com.team.hospital.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class SysUsers {
@@ -19,6 +21,7 @@ public class SysUsers {
 
     private String salt;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdTime;
 
     private Date updatedTime;

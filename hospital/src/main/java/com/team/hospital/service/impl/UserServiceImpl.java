@@ -58,6 +58,12 @@ public class UserServiceImpl implements UserService {
         return new PageInfo<SysUsers>(list);
     }
 
+    //添加用户
+    @Override
+    public int addUser(SysUsers user) {
+        return sysUsersMapper.insertSelective(user);
+    }
+
     public static void main(String[] args) {
         PageParmeter parmeter = new PageParmeter();
         parmeter.setPage(1);
@@ -65,7 +71,7 @@ public class UserServiceImpl implements UserService {
         UserService userService = new UserServiceImpl();
         PageInfo<SysUsers> info = userService.getUsers(parmeter);
         info.getList().forEach((s) -> {
-            System.out.println(s.getTypename());
+            System.out.println(s.getCreatedTime());
         });
     }
 }

@@ -23,4 +23,7 @@ public interface UserService {
 
     //获取所有用户
     public PageInfo<SysUsers> getUsers(PageParmeter pageParmeter);
+
+    //添加用户
+    public int addUser(SysUsers user);
 }

@@ -19,6 +19,13 @@
   </properties>
 
   <dependencies>
+    <!--aliyunOSS-->
+    <dependency>
+      <groupId>com.aliyun.oss</groupId>
+      <artifactId>aliyun-sdk-oss</artifactId>
+      <version>3.10.2</version>
+    </dependency>
+
     <!--添加mybatis分页插件支持-->
     <dependency>
       <groupId>com.github.pagehelper</groupId>

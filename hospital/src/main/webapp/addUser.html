@@ -76,7 +76,7 @@
             <el-upload
                     class="avatar-uploader"
                     name="file"
-                    action="sysuser/upload"
+                    action="user/uploadFile"
                     :show-file-list="false"
                     :on-success="handleAvatarSuccess"
                     :before-upload="beforeAvatarUpload">
@@ -154,7 +154,7 @@
                 submitForm(formName) {
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
-                            axios.post("sysuser/addUser",this.userForm).then((user) => {
+                            axios.post("user/addUser",this.userForm).then((user) => {
                                 if (user.data.code === '1000') {
                                     this.$refs[formName].resetFields();
                                     this.userForm.headUrl = "";
@@ -181,6 +181,7 @@
                 handleAvatarSuccess(res, file) {
                     //this.userForm.headUrl = URL.createObjectURL(file.raw);
                     this.userForm.headUrl = res.data;
+                    console.log(res.data);
                 },
                 //上传前准备
                 beforeAvatarUpload(file) {

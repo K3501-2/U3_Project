@@ -19,5 +19,7 @@ public interface SysUsersMapper {
 
     int updateByPrimaryKey(SysUsers record);
 
+    //获取所有用户信息
     List<SysUsers> getAllUser();
+
 }
