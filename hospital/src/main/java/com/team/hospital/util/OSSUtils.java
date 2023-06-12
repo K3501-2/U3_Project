@@ -11,9 +11,9 @@ import java.io.FileInputStream;
  */
 public class OSSUtils {
     private final static  String endpoint = "oss-cn-hangzhou.aliyuncs.com";  //服务器节点
-    private final static String accessKeyId = "LTAI5tSZC421Lmus1ng9EhJW";  //访问key
-    private final static String accessKeySecret = "SW9BnPQfmBZkS2egbL3I48ZvrhMuwW";  //key对应的密钥
-    private final static String bucketName = "k3501-g2"; //桶名
+    private final static String accessKeyId = "";  //访问key
+    private final static String accessKeySecret = "";  //key对应的密钥
+    private final static String bucketName = ""; //桶名
     /**
      * //编写上传文件的方法
      *  @param filename  上传的文件名称
