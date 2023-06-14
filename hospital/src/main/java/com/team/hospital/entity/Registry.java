@@ -3,6 +3,7 @@ package com.team.hospital.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
+//挂号表
 public class Registry {
     private Long id;
 

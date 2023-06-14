@@ -64,6 +64,12 @@ public class UserServiceImpl implements UserService {
         return sysUsersMapper.insertSelective(user);
     }
 
+    //查询科室和时间段的医生
+    @Override
+    public List<SysUsers> getUsersByDepart(Long departmentid, Byte sign) {
+        return sysUsersMapper.getUsersByDepart(departmentid, sign);
+    }
+
     public static void main(String[] args) {
         PageParmeter parmeter = new PageParmeter();
         parmeter.setPage(1);

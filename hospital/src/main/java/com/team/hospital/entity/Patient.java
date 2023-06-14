@@ -1,12 +1,16 @@
 package com.team.hospital.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
+//病人表
 public class Patient {
     private Long id;
 
     private String name;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
 
     private Byte sex;
@@ -21,8 +25,10 @@ public class Patient {
 
     private String idMedicare;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updatedTime;
 
     public Long getId() {

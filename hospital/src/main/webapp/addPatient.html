@@ -7,6 +7,7 @@
     <script src="js/vue.js"></script>
     <script src="element-ui/lib/index.js"></script>
     <script src="js/axios-0.18.0.js"></script>
+    <script src="js/validateSfz.js" type="module"></script>
     <style>
         .avatar-uploader .el-upload {
             border: 1px dashed #d9d9d9;
@@ -49,15 +50,17 @@
         <el-form-item label="医保卡号" prop="idMedicare">
             <el-input  v-model="patientForm.idMedicare"></el-input>
         </el-form-item>
+
         <el-form-item label="身份证号" prop="idCard">
-            <el-input  v-model="patientForm.idCard"></el-input>
+            <el-input  v-model="patientForm.idCard" :maxlength="18"></el-input>
         </el-form-item>
         <el-form-item label="出生日期" prop="birthday">
-            <el-input v-model="patientForm.birthday" disabled></el-input>
+            <!--<el-input v-model="patientForm.birthday" ></el-input>-->
+            <el-date-picker type="date" v-model="patientForm.birthday" ></el-date-picker>
         </el-form-item>
 
         <el-form-item label="性别" prop="sex">
-            <el-select v-model="patientForm.sex" disabled placeholder="请选择">
+            <el-select v-model="patientForm.sex" placeholder="请选择">
                 <el-option
                         v-for="item in options"
                         :key="item.value"
@@ -73,49 +76,66 @@
     </el-form>
 </div>
 </body>
-<script type="application/javascript">
+<script type="module">
+    import {validateSfz} from "/js/validateSfz.js";
     new Vue({
             el: '#div',
-            data: {
-                patientForm: {
-                    name: '',
-                    phone: '',
-                    address: '',
-                    isMedicare:2,
-                    idMedicare: '',
-                    idCard: '',
-                    birthday: '',
-                    sex:1
-                },
-                options: [{value: 1, label: '女'}, {value: 2, label: '男'}],
-                rules: {
-                    name: [
-                        { required: true, message: '病人姓名不能为空', trigger: 'blur' }
-                    ],
-                    phone: [
-                        { required: true, message: '手机不能为空', trigger: 'blur' }
-                    ],
-                    address: [
-                        { required: true, message: '家庭地址不能为空', trigger: 'blur' }
-                    ],
-                    idCard: [
-                        { required: true, message: '身份证号不能为空', trigger: 'blur' }
-                    ]
+            data(){
+                return{
+                    patientForm: {
+                        name: '',
+                        phone: '',
+                        address: '',
+                        isMedicare:2,
+                        idMedicare: '',
+                        idCard: '',
+                        birthday: '',
+                        sex:1,
+                    },
+                    options: [{value: 1, label: '女'}, {value: 2, label: '男'}],
+                    rules: {
+                        name: [
+                            {required: true, message: '病人姓名不能为空', trigger: 'blur'}
+                        ],
+                        phone: [
+                            {required: true, message: '手机不能为空', trigger: 'blur'}
+                        ],
+                        address: [
+                            {required: true, message: '家庭地址不能为空', trigger: 'blur'}
+                        ],
+                        //校验规则
+                        idCard: [{ required: true, validator: validateSfz, trigger: "blur" }],
+                    }
                 }
             },
             methods: {
                 submitForm(formName) {
-                    this.$refs[formName].validate((valid) => {
-                        if (valid) {
-                            alert('submit!');
-                        } else {
-                            console.log('error submit!!');
-                            return false;
-                        }
+                    //1.获取表单数据--利用json对象接收表单数据（利用vue双向绑定）
+                    //2.调用接口
+                    axios.post("patient/add", this.patientForm).then((ret) => {
+                       if (ret.data.code == 1){ //成功
+                           // this.$message({message: '添加成功', type: 'success'});
+                           //刷新  防止重复添加
+                           //location.reload();
+                           //提示成功后，再做处理
+                           this.$message({message:'添加成功', type:'success', onClose:() =>{
+                               location.reload();
+                               }});
+                       } else { //失败
+                           this.$message({message:'添加失败', type:'error'})
+                       }
                     });
                 },
                 resetForm(formName) {
                     this.$refs[formName].resetFields();
+                },
+                checkIdentitytionId(value) {
+                    this.checkId = (rule, value, callback) => {
+                        var errorMsg = isIdentityId(value);
+                        if (errorMsg != "") {
+                            callback(new Error(errorMsg));
+                        }
+                    }
                 }
             }
         }

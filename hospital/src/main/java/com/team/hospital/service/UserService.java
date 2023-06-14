@@ -3,6 +3,7 @@ package com.team.hospital.service;
 import com.github.pagehelper.PageInfo;
 import com.team.hospital.entity.SysUsers;
 import com.team.hospital.util.PageParmeter;
+import org.apache.ibatis.annotations.Param;
 
 
 import java.util.List;
@@ -26,4 +27,7 @@ public interface UserService {
 
     //添加用户
     public int addUser(SysUsers user);
+
+    //查询科室和时间段的医生
+    List<SysUsers> getUsersByDepart(Long departmentid,Byte sign);
 }

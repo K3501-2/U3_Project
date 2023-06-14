@@ -68,7 +68,7 @@
     from patient
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from patient
     where id = #{id,jdbcType=BIGINT}
   </delete>
@@ -205,4 +205,10 @@
       updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <!--通过身份证查询单条病人数据-->
+  <select id="getPatient"
+          parameterType="String"
+          resultMap="BaseResultMap">
+    SELECT * FROM patient WHERE id_card = #{cardid,jdbcType=VARCHAR}
+  </select>
 </mapper>

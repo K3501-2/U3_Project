@@ -223,4 +223,10 @@
              WHEN 5 THEN '药房医师'
              END AS typename  FROM sys_users
   </select>
+    <select id="getUsersByDepart" resultType="com.team.hospital.entity.SysUsers">
+      SELECT id,user_name as userName FROM sys_users
+      WHERE id IN(SELECT user_id FROM `schedule`
+                  WHERE department_id=#{departmentid,jdbcType=BIGINT}
+                    AND `sign`=#{sign,jdbcType=TINYINT})
+    </select>
 </mapper>

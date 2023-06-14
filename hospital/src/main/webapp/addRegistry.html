@@ -36,9 +36,9 @@
 <body>
 <div id="div">
     <h4>挂号</h4>
-    <el-form :model="registerForm" size="mini" :rules="rules" ref="registerForm" label-width="100px">
+    <el-form :model="registerForm.patient" size="mini" :rules="rules" ref="registerForm" label-width="100px">
         <el-form-item label="身份证号" prop="idCard">
-            <el-input  v-model="registerForm.patient.idCard"></el-input>
+            <el-input  v-model="registerForm.patient.idCard" @change="loadPatient()"></el-input>
         </el-form-item>
         <el-form-item label="病人姓名" prop="name">
             <el-input v-model="registerForm.patient.name" disabled></el-input>
@@ -53,7 +53,7 @@
             <el-input v-model="registerForm.patient.sex" disabled></el-input>
         </el-form-item>
         <el-form-item label="家庭地址" prop="address">
-            <el-input  v-model="registerForm.patient.address"></el-input>
+            <el-input  v-model="registerForm.patient.address" disabled></el-input>
         </el-form-item>
         <el-form-item label="就诊科室" prop="departmentId">
             <el-select v-model="registerForm.departmentId"  placeholder="请选择">
@@ -122,12 +122,12 @@
                 registerForm: {
                     /*病人信息*/
                     patient:{
-                        idCard: '42900619790313543X',
-                        name: 'xxx',
-                        phone: '15927403749',
-                        birthday: '2015-02-03',
+                        idCard: '',
+                        name: '',
+                        phone: '',
+                        birthday: '',
                         sex:1,
-                        address: '江夏区纸坊街'
+                        address: ''
                     },
                     patientId:0, /*病人ID*/
                     departmentId:'',/*就诊科室*/
@@ -145,22 +145,12 @@
                     payFee:10,/*实际应支付*/
                     medicareFee:40,/*医保报销费*/
                 },
-                departmentList:[
-                    {id: 1, name: '门诊内科'},
-                    {id: 2, name: '门诊外科'},
-                    {id: 3, name: '门诊儿科'},
-                    {id: 4, name: '门诊眼科'},
-                    {id: 5, name: '门诊口腔科'}
-                ],
+                departmentList:[],
                 signList:[
                     {id: 1, name: '上午'},
                     {id: 2, name: '下午'}
                 ],
-                docterList:[
-                    {id: 1, userName: '张医生'},
-                    {id: 2, userName: '李医生'},
-                    {id: 3, userName: '赵医生'}
-                ],
+                docterList:[],
                 rules: {
                     name: [
                         { required: true, message: '病人姓名不能为空', trigger: 'blur' }
@@ -179,7 +169,20 @@
             methods: {
                 //选择时间段
                 selectsign(){
-                    alert("编码时通过时间段:"+this.registerForm.sign+"和科室编号:"+this.registerForm.departmentId+"发送Ajax加载医师");
+                    //alert("编码时通过时间段:"+this.registerForm.sign+"和科室编号:"+this.registerForm.departmentId+"发送Ajax加载医师");
+                    //1.调用接口
+                    axios.get("user/getUserByDt", {
+                        params: {
+                            departmentId: this.registerForm.departmentId,
+                            sign: this.registerForm.sign
+                        }
+                    }).then((ret) => {
+                        if (ret.data.code == 1)
+                            //将查出来的医生给模型
+                            this.docterList = ret.data.data;
+                        else
+                            console.log("获取数据失败！");
+                    });
                 },
                 //选择是否医保
                 selectMedicare(){
@@ -206,7 +209,33 @@
                 },
                 resetForm(formName) {
                     this.$refs[formName].resetFields();
+                },
+                loadPatient:function (){
+                    //调用后台接口获取信息
+                    axios.get("patient/getPatient", {
+                        params:{
+                            cardid:this.registerForm.patient.idCard
+                        }
+                    }).then((ret) => {
+                        var info = ret.data.data;
+                        if (info != null){
+                            //回显
+                            this.registerForm.patient.name = info.name;
+                            this.registerForm.patient.birthday = info.birthday;
+                            this.registerForm.patient.sex = info.sex;
+                            this.registerForm.patient.address = info.address;
+                            this.registerForm.patient.phone = info.phone;
+                        } else {
+                            this.$message({message: '输入身份号不正确', type: 'error'});
+                        }
+                    })
                 }
+            },
+            mounted:function () {
+                //获取门诊科室信息
+                axios.get("department/getAll").then((ret) => {
+                   this.departmentList = ret.data.data;
+                });
             }
         }
     );

@@ -18,4 +18,7 @@ public interface PatientMapper {
     int updateByPrimaryKeySelective(Patient record);
 
     int updateByPrimaryKey(Patient record);
+
+    //通过身份证查询单条病人数据
+    Patient getPatient(String cardid);
 }

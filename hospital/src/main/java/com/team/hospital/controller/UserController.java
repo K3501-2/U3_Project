@@ -115,9 +115,22 @@ public class UserController {
         //调用业务实现添加
         int result = this.userService.addUser(users);
         if(result > 0){
-            return new Result("1000","添加用户成功");
+            return new Result("1","添加用户成功");
         } else {
-            return new Result("1001","添加用户失败");
+            return new Result("0","添加用户失败");
         }
+    }
+
+    //通过科室和时间段取医生  getUserByDt?departmentid=值&sign=值
+    //Dt = Dapartment and Time
+    @RequestMapping("getUserByDt")
+    @ResponseBody
+    public  Result<List<SysUsers>> getUserByDt(Long departmentId, Byte sign){
+        //返回数据
+        List<SysUsers> usersList = this.userService.getUsersByDepart(departmentId, sign);
+        if (usersList.size() > 0)
+            return new Result<>("1","通过科室和时间段查询医生", usersList);
+        else
+            return new Result<>("0", "查询失败");
     }
 }

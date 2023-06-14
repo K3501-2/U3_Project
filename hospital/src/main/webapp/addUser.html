@@ -155,7 +155,7 @@
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
                             axios.post("user/addUser",this.userForm).then((user) => {
-                                if (user.data.code === '1000') {
+                                if (user.data.code === '1') {
                                     this.$refs[formName].resetFields();
                                     this.userForm.headUrl = "";
                                     this.$message({
