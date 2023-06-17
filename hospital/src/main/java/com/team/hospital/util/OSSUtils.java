@@ -10,7 +10,7 @@ import java.io.FileInputStream;
  * oss文件操作的工具类
  */
 public class OSSUtils {
-    private final static  String endpoint = "oss-cn-hangzhou.aliyuncs.com";  //服务器节点
+    private final static  String endpoint = "";  //服务器节点
     private final static String accessKeyId = "";  //访问key
     private final static String accessKeySecret = "";  //key对应的密钥
     private final static String bucketName = ""; //桶名

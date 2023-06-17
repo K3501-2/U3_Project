@@ -1,5 +1,6 @@
 package com.team.hospital.mapper;
 
+import com.team.hospital.dto.UserDto;
 import com.team.hospital.entity.SysUsers;
 import com.team.hospital.entity.SysUsersExample;
 import org.apache.ibatis.annotations.Param;
@@ -27,6 +28,9 @@ public interface SysUsersMapper {
     //通过科室和时间段查找医生 long departmentid, byte sign -->封装类中|集合
     //@Param用于指定mybatis参数名称
     List<SysUsers> getUsersByDepart(
-            @Param(value = "departmentid") Long departmentid,
+            @Param(value = "departmentId") Long departmentId,
             @Param(value = "sign") Byte sign);
+
+    //通过科室和时间段查找医生
+    List<UserDto> getUsersByD(long departmentId);
 }

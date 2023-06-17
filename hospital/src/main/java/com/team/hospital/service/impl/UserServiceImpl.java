@@ -2,6 +2,7 @@ package com.team.hospital.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.team.hospital.dto.UserDto;
 import com.team.hospital.entity.SysUsers;
 import com.team.hospital.entity.SysUsersExample;
 import com.team.hospital.mapper.SysUsersMapper;
@@ -66,18 +67,13 @@ public class UserServiceImpl implements UserService {
 
     //查询科室和时间段的医生
     @Override
-    public List<SysUsers> getUsersByDepart(Long departmentid, Byte sign) {
-        return sysUsersMapper.getUsersByDepart(departmentid, sign);
+    public List<SysUsers> getUsersByDepart(long departmentId, byte sign) {
+        return sysUsersMapper.getUsersByDepart(departmentId, sign);
     }
 
-    public static void main(String[] args) {
-        PageParmeter parmeter = new PageParmeter();
-        parmeter.setPage(1);
-        parmeter.setPageSize(3);
-        UserService userService = new UserServiceImpl();
-        PageInfo<SysUsers> info = userService.getUsers(parmeter);
-        info.getList().forEach((s) -> {
-            System.out.println(s.getCreatedTime());
-        });
+    //通过科室查寻医生
+    @Override
+    public List<UserDto> getUsersByDe(long departmentId) {
+        return sysUsersMapper.getUsersByD(departmentId);
     }
 }

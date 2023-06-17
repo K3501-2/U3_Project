@@ -78,3 +78,28 @@ day20 项目四(创建就诊卡+挂号页面数据加载)
    2. 对应前端页面（addRegistry.html）编辑
 
 5. 接口写完一定测试！
+
+   ​
+
+
+
+## 第三次更新
+
+2023年6月16日09:15:53
+
+day21 挂号信息保存+挂号信息管理
+
+### 今日新增：
+
+1. *DTO工具加入，新增：*
+   1. 房间查询实体类（RoomDto.java）；
+   2. 用户查询实体类（UserDto.java）;
+2. *接口*：
+   1. 文件上传(UserController)→(/user/uploadFile)；
+   2. 用户列表后台(RegistryController)→(/registry/save)；
+   3. 科室信息加载(UserController)→(/user/getUserByD);
+
+### 与示例代码不同：
+
+### 同步代码需注意事项：
+

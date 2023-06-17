@@ -50,13 +50,13 @@
             <el-input v-model="registerForm.patient.birthday" disabled></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
-            <el-input v-model="registerForm.patient.sex" disabled></el-input>
+            <el-input v-model="sex" disabled></el-input>
         </el-form-item>
         <el-form-item label="家庭地址" prop="address">
             <el-input  v-model="registerForm.patient.address" disabled></el-input>
         </el-form-item>
         <el-form-item label="就诊科室" prop="departmentId">
-            <el-select v-model="registerForm.departmentId"  placeholder="请选择">
+            <el-select v-model="registerForm.departmentId"  placeholder="请选择" @change="loadDepart()">
                 <el-option
                         v-for="item in departmentList"
                         :key="item.id"
@@ -87,7 +87,7 @@
             </el-select>
         </el-form-item>
         <el-form-item label="就诊房间" prop="roomId" v-if="registerForm.userId!=''">
-            <el-input v-model="registerForm.room.name"></el-input>
+            <el-input v-model="registerForm.roomName"></el-input>
         </el-form-item>
 
         <el-form-item label="是否医保" prop="isMedicare">
@@ -97,7 +97,7 @@
             </el-radio-group>
         </el-form-item>
         <el-form-item label="医保卡号" prop="idMedicare" v-if="registerForm.userId!=''&&this.registerForm.isMedicare==1">
-            <el-input  v-model="registerForm.idMedicare"></el-input>
+            <el-input  v-model="registerForm.idMedicare" ></el-input>
         </el-form-item>
         <el-form-item label="挂号总金额" prop="fee" v-if="registerForm.userId!=''">
             <el-input v-model="registerForm.fee" disabled></el-input>
@@ -127,18 +127,21 @@
                         phone: '',
                         birthday: '',
                         sex:1,
-                        address: ''
+                        address: '',
+                        idMedicare: ''
                     },
-                    patientId:0, /*病人ID*/
+                    patientId:'', /*病人ID*/
                     departmentId:'',/*就诊科室*/
                     sign:'',
                     userId:'',/*就诊医生*/
-                    scheduleId:0,/*排期编号*/
+                    scheduleId: '',/*排期编号*/
                     isMedicare:2,/*是否医保*/
-                    room:{
-                        id:1,
-                        name:'A201'
-                    },
+                    roomId: '',/*房间id*/
+                    roomName: '',/*房间名称*/
+                    /*room:{
+                        id:'',
+                        name:''
+                    },*/
                     idMedicare: '',/*医保卡号*/
                     status:1, /*1-->已挂号，未问诊；2-->正在问诊；3-->问诊结束',*/
                     fee:50, /*挂号总金额(￥)*/
@@ -177,16 +180,22 @@
                             sign: this.registerForm.sign
                         }
                     }).then((ret) => {
-                        if (ret.data.code == 1)
+                        this.registerForm.userId = '';
+                        if (ret.data.code == 1) {
                             //将查出来的医生给模型
                             this.docterList = ret.data.data;
-                        else
-                            console.log("获取数据失败！");
+                        } else {
+                            console.log("没有查到该时段有就诊医生");
+                            this.registerForm.userId = '';
+                        }
+                    }).catch((error)=>{
+                        console.log("接口出错"+error)
                     });
                 },
                 //选择是否医保
                 selectMedicare(){
                     if(this.registerForm.isMedicare==1){
+                        this.registerForm.idMedicare = this.registerForm.patient.idMedicare;
                         this.registerForm.medicareFee=40;
                     }else if(this.registerForm.isMedicare==2){
                         this.registerForm.medicareFee=0;
@@ -195,12 +204,31 @@
                 },
                 //选择医师
                 selectDoctor(){
-                    alert("实际编码，查询医师房间号,初始化房间信息");
+                    //alert("实际编码，查询医师房间号,初始化房间信息");
+                    axios.get("room/getRoomByD", {
+                        params: {
+                            departmentId: this.registerForm.departmentId,
+                            uid: this.registerForm.userId,
+                            sign: this.registerForm.sign
+                        }
+                    }).then((ret) => {
+                        var roomObj = ret.data.data;
+                        //将获取的房间信息舍之道vue的模型数据，进行绑定显示
+                        this.registerForm.roomId = roomObj.id;
+                        this.registerForm.roomName = roomObj.name;
+                        /*this.registerForm.room.id = roomObj.id;
+                        this.registerForm.room.name = roomObj.name;*/
+                        this.registerForm.scheduleId = roomObj.sid; //排期id
+                    }).catch((error)=>{
+                        console.log("接口出错"+error);
+                    });
                 },
                 submitForm(formName) {
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
-                            alert('submit!');
+                            //alert('submit!');
+                            this.save();
+                            //this.resetForm(formName);
                         } else {
                             console.log('error submit!!');
                             return false;
@@ -208,9 +236,10 @@
                     });
                 },
                 resetForm(formName) {
+                    //this.docterList = this.$options.data().docterList;
                     this.$refs[formName].resetFields();
                 },
-                loadPatient:function (){
+                loadPatient(){
                     //调用后台接口获取信息
                     axios.get("patient/getPatient", {
                         params:{
@@ -225,17 +254,61 @@
                             this.registerForm.patient.sex = info.sex;
                             this.registerForm.patient.address = info.address;
                             this.registerForm.patient.phone = info.phone;
+                            this.registerForm.patient.idMedicare = info.idMedicare;
+                            this.registerForm.patientId = info.id;
                         } else {
                             this.$message({message: '输入身份号不正确', type: 'error'});
                         }
-                    })
+                    }).catch((error)=>{
+                        console.log("接口出错"+error)
+                    });
+                },
+                loadDepart(){
+                    //获取门诊科室信息
+                    axios.get("department/getAll").then((ret) => {
+                        this.departmentList = ret.data.data;
+                        this.registerForm.sign = '';
+                        this.registerForm.userId = '';
+                    }).catch((error)=>{
+                        console.log("接口出错"+error)
+                    });
+                },
+                save(){
+                    //表单验证成功：调用后台接口实现添加
+                    //1.获取表单数据----只要使用json对象接收表单数据
+                    console.log(this.registerForm);
+                    //2.调用接口
+                    axios.post("registry/save", this.registerForm).then((ret) => {
+                        if(ret.data.code==1){
+                            this.$alert('挂号成功', '挂号提示', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    location.reload();
+                                    //this.resetForm(this.registerForm);
+                                }
+                            });
+                        } else {
+                            this.$alert('挂号失败', '挂号提示', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    location.reload();
+                                }
+                            });
+                        }
+                    }).catch((error)=>{
+                        console.log("接口出错"+error)
+                    });
                 }
             },
             mounted:function () {
-                //获取门诊科室信息
-                axios.get("department/getAll").then((ret) => {
-                   this.departmentList = ret.data.data;
-                });
+                this.loadDepart();
+            },
+            //显示性别
+            computed: {
+                sex() {
+                    const sex = this.registerForm.patient.sex;
+                    return sex === 1 ? '男' : '女'; // 根据实际需求设置对应的性别名称
+                }
             }
         }
     );

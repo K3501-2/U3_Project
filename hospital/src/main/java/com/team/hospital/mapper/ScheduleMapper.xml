@@ -194,4 +194,11 @@
       updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="selectSchedule" resultType="com.team.hospital.entity.Schedule">
+    SELECT id AS schedule_id FROM schedule
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        AND department_id = #{departmentId,jdbcType=BIGINT}
+        AND room_id = #{roomId,jdbcType=BIGINT}
+        AND `sign` = #{sign,jdbcType=TINYINT}
+  </select>
 </mapper>

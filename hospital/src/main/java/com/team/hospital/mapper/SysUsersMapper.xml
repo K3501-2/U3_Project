@@ -226,7 +226,15 @@
     <select id="getUsersByDepart" resultType="com.team.hospital.entity.SysUsers">
       SELECT id,user_name as userName FROM sys_users
       WHERE id IN(SELECT user_id FROM `schedule`
-                  WHERE department_id=#{departmentid,jdbcType=BIGINT}
+                  WHERE department_id=#{departmentId,jdbcType=BIGINT}
                     AND `sign`=#{sign,jdbcType=TINYINT})
     </select>
+  <select id="getUsersByD"
+          resultType="com.team.hospital.dto.UserDto"
+          parameterType="long">
+    SELECT id,user_Name AS userName FROM sys_users
+        WHERE id IN (SELECT user_id
+                    FROM `schedule` WHERE department_id=#{departmentId,jdbcType=BIGINT})
+  </select>
+
 </mapper>

@@ -30,7 +30,7 @@
 
             <el-col :span=4>
                 就诊科室:
-                <el-select v-model="searchForm.departmentId" placeholder="请选择" size="mini" style="width: 130px">
+                <el-select v-model="searchForm.departmentId" @change="loadDocter()" placeholder="请选择" size="mini" style="width: 130px">
                     <el-option
                             v-for="item in departmentList"
                             :key="item.id"
@@ -170,11 +170,7 @@
                     userId: '',
                     status: ''
                 },
-                docterList: [
-                    {id: 1, userName: '张医生'},
-                    {id: 2, userName: '李医生'},
-                    {id: 3, userName: '赵医生'}
-                ],
+                docterList: [],
                 statusList: [
                     {id: 1, name: '已挂号，未问诊'},
                     {id: 2, name: '正在问诊'},
@@ -336,12 +332,17 @@
                 formLabelWidth: '120px'
             },
             methods: {
+                loadDocter(){//加载医生
+                    //调用后台接口
+                    axios.get("user/getUserByD?departmentId=" + this.searchForm.departmentId).then((ret) => {
+                        //获取返回的数据填充到vue的模型
+                        this.docterList = ret.data.data;
+                    });
+                },
                 getRegistryListByPage() {
-
                 },
                 detailRegistry(index, row) {
                     this.dialogFormVisible = true;
-
                     this.form.name=row.patient.name;
                     this.form.idCard=row.patient.idCard;
                     this.form.sex=row.patient.sex;
@@ -389,7 +390,6 @@
                 //功能：翻页查询，pagination组件会自动传递当前页号currentPage
                 handleCurrentChange(currentPage) {
                     this.pagination.currentPage = currentPage;
-
                 }
             }
         }

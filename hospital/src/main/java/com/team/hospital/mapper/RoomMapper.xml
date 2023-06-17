@@ -134,4 +134,14 @@
       updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <!--通过科室、时间段、医生找房间-->
+  <select id="getRoomByDtd" resultType="com.team.hospital.dto.RoomDto">
+    SELECT TEMPTABLE.id AS sid,room.id,NAME FROM
+      (SELECT room_id,id FROM `schedule`
+        WHERE department_id = #{departmentId,jdbcType=BIGINT}
+        AND user_id = #{uid,jdbcType=BIGINT}
+        AND `sign` = #{sign,jdbcType=TINYINT}) AS TEMPTABLE
+        LEFT JOIN room ON TEMPTABLE.room_id=room.id
+  </select>
 </mapper>

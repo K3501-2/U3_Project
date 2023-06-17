@@ -2,6 +2,8 @@ package com.team.hospital.mapper;
 
 import com.team.hospital.entity.Schedule;
 import com.team.hospital.entity.ScheduleExample;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 public interface ScheduleMapper {
@@ -18,4 +20,12 @@ public interface ScheduleMapper {
     int updateByPrimaryKeySelective(Schedule record);
 
     int updateByPrimaryKey(Schedule record);
+
+    //查询排班表id
+    Schedule selectSchedule(
+            @Param(value = "userId") Long userId,
+            @Param(value = "departmentId") Long departmentId,
+            @Param(value = "roomId") Long roomId,
+            @Param(value = "sign") Byte sign
+    );
 }

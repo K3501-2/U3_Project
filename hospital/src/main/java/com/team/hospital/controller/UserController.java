@@ -1,6 +1,7 @@
 package com.team.hospital.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.team.hospital.dto.UserDto;
 import com.team.hospital.entity.SysUsers;
 import com.team.hospital.service.UserService;
 import com.team.hospital.util.MD5Utils;
@@ -9,10 +10,7 @@ import com.team.hospital.util.PageParmeter;
 import com.team.hospital.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpSession;
@@ -125,12 +123,25 @@ public class UserController {
     //Dt = Dapartment and Time
     @RequestMapping("getUserByDt")
     @ResponseBody
-    public  Result<List<SysUsers>> getUserByDt(Long departmentId, Byte sign){
+    public  Result<List<SysUsers>> getUserByDt(long departmentId, byte sign){
         //返回数据
         List<SysUsers> usersList = this.userService.getUsersByDepart(departmentId, sign);
         if (usersList.size() > 0)
             return new Result<>("1","通过科室和时间段查询医生", usersList);
         else
-            return new Result<>("0", "查询失败");
+            return new Result<>("0", "没有查到该时段有就诊医生");
+    }
+
+    //通过科室医生  getUserByD?departmentid=值
+    @GetMapping("getUserByD")//强制只能使用get请求
+    @ResponseBody
+    public Result<List<UserDto>> getUserByD(long departmentId){
+        try {
+            List<UserDto> userList = this.userService.getUsersByDe(departmentId);
+            return new Result<>("1", "通过科室查寻医生成功", userList);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result<>("0", "通过科室查询医生失败");
+        }
     }
 }
