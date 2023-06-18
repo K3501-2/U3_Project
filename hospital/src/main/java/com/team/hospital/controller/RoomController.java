@@ -27,7 +27,7 @@ public class RoomController {
     //获取所有的科室  getRoomByD?departmentid=&sign=&uid
     @RequestMapping("getRoomByD")
     @ResponseBody
-    public Result<RoomDto> getRoomByD(long departmentId, long uid, byte sign){
+    public Result<RoomDto> getRoomByD(Long departmentId, Long uid, Byte sign){
         try {
             RoomDto rooms = roomService.getRoomByDtd(departmentId, uid, sign);
             return new Result<>("1", "查询房间成功", rooms);

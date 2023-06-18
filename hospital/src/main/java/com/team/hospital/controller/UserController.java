@@ -123,7 +123,7 @@ public class UserController {
     //Dt = Dapartment and Time
     @RequestMapping("getUserByDt")
     @ResponseBody
-    public  Result<List<SysUsers>> getUserByDt(long departmentId, byte sign){
+    public  Result<List<SysUsers>> getUserByDt(Long departmentId, Byte sign){
         //返回数据
         List<SysUsers> usersList = this.userService.getUsersByDepart(departmentId, sign);
         if (usersList.size() > 0)
@@ -135,7 +135,7 @@ public class UserController {
     //通过科室医生  getUserByD?departmentid=值
     @GetMapping("getUserByD")//强制只能使用get请求
     @ResponseBody
-    public Result<List<UserDto>> getUserByD(long departmentId){
+    public Result<List<UserDto>> getUserByD(Long departmentId){
         try {
             List<UserDto> userList = this.userService.getUsersByDe(departmentId);
             return new Result<>("1", "通过科室查寻医生成功", userList);

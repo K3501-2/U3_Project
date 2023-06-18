@@ -14,5 +14,5 @@ import com.team.hospital.dto.RoomDto;
  */
 public interface RoomService {
     //查询就诊房间
-    public RoomDto getRoomByDtd(long departmentId, long uid, byte sign);
+    public RoomDto getRoomByDtd(Long departmentId, Long uid, Byte sign);
 }

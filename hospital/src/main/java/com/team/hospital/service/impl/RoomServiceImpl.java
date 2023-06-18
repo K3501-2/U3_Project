@@ -24,7 +24,7 @@ public class RoomServiceImpl implements RoomService {
 
     //查询就诊房间业务实现
     @Override
-    public RoomDto getRoomByDtd(long departmentId, long uid, byte sign) {
+    public RoomDto getRoomByDtd(Long departmentId, Long uid, Byte sign) {
         return roomMapper.getRoomByDtd(departmentId, uid, sign);
     }
 }

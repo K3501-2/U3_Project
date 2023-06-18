@@ -103,3 +103,62 @@ day21 挂号信息保存+挂号信息管理
 
 ### 同步代码需注意事项：
 
+
+
+## 第四次更新
+
+2023年6月18日09:47:05
+
+day22 挂号信息分页展示
+
+### 今日新增：
+
+1. *新增类：*
+   1. 条件查询挂号信息工具类（RegCondition.java）；
+   2. 挂号信息返回实体类（RegistryDto.java）;
+   3. 查看详细挂号信息实体类（RegistryDescDto.java）;
+2. *dao ( mapper )层新增*：
+   1. 条件查询挂号信息( RegistryMapper.java )→( getRegistryByCondition );
+   2. 查看详细挂号信息( RegistryMapper.java )→( getRegistryDesc );
+3. *Service业务层新增*：
+   1. 挂号信息条件查询（分页）业务( RegisterService )→( PageInfo&lt;RegistryDto&gt; searchRegistry )；
+   2. 查看详细挂号信息业务( RegisterService )→( RegistryDescDto getRegistryDesc )；
+4. *控制层接口*：
+   1. 分页查询挂号信息(RegistryController)→(/registery/regSearch)；
+   2. 查看详细挂号信息业务((RegistryController)→(/registry/regDesc)；
+5. 对应前端页面更改
+
+### 与示例代码不同：
+
+显示性别：
+
+```vue
+//显示性别
+filters: {
+    genderFilter(value) {
+        if (value === '1')
+            return '男';
+        if (value === '2')
+            return '女';
+    }
+}
+```
+
+详细挂号信息页面右上角叉号退出：
+
+```html
+<!--挂号单详情  :visible="true"  显示  :visible="false"不显示 -->
+<el-dialog title="查看挂号信息" :visible.sync="dialogFormVisible" width="70%" :before-close="handleClose">
+```
+
+```vue
+handleClose(done) {
+    this.$confirm('确认关闭？')
+        .then(_ => {
+            done();
+        })
+        .catch(_ => {});
+},
+```
+
+### 同步代码需注意事项：

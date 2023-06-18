@@ -32,5 +32,5 @@ public interface SysUsersMapper {
             @Param(value = "sign") Byte sign);
 
     //通过科室和时间段查找医生
-    List<UserDto> getUsersByD(long departmentId);
+    List<UserDto> getUsersByD(Long departmentId);
 }

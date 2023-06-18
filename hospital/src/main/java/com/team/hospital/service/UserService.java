@@ -30,8 +30,8 @@ public interface UserService {
     public int addUser(SysUsers user);
 
     //查询科室和时间段的医生
-    List<SysUsers> getUsersByDepart(long departmentId, byte sign);
+    List<SysUsers> getUsersByDepart(Long departmentId, Byte sign);
 
     //通过科室查寻医生
-    List<UserDto> getUsersByDe(long departmentId);
+    List<UserDto> getUsersByDe(Long departmentId);
 }

@@ -67,13 +67,13 @@ public class UserServiceImpl implements UserService {
 
     //查询科室和时间段的医生
     @Override
-    public List<SysUsers> getUsersByDepart(long departmentId, byte sign) {
+    public List<SysUsers> getUsersByDepart(Long departmentId, Byte sign) {
         return sysUsersMapper.getUsersByDepart(departmentId, sign);
     }
 
     //通过科室查寻医生
     @Override
-    public List<UserDto> getUsersByDe(long departmentId) {
+    public List<UserDto> getUsersByDe(Long departmentId) {
         return sysUsersMapper.getUsersByD(departmentId);
     }
 }

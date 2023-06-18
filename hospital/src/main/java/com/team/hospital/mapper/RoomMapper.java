@@ -25,8 +25,8 @@ public interface RoomMapper {
 
     //查询坐诊医生对应的房间信息
     RoomDto getRoomByDtd(
-            @Param(value = "departmentId") long departmentId,
-            @Param(value = "uid") long uid,
-            @Param(value = "sign") byte sign
+            @Param(value = "departmentId") Long departmentId,
+            @Param(value = "uid") Long uid,
+            @Param(value = "sign") Byte sign
     );
 }

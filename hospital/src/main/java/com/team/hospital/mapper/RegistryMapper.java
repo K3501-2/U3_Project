@@ -1,8 +1,12 @@
 package com.team.hospital.mapper;
 
+import com.team.hospital.dto.RegistryDescDto;
+import com.team.hospital.dto.RegistryDto;
 import com.team.hospital.entity.Patient;
 import com.team.hospital.entity.Registry;
 import com.team.hospital.entity.RegistryExample;
+import com.team.hospital.util.RegCondition;
+
 import java.util.List;
 
 public interface RegistryMapper {
@@ -20,4 +24,7 @@ public interface RegistryMapper {
 
     int updateByPrimaryKey(Registry record);
 
+    List<RegistryDto> getRegistryByCondition(RegCondition condition);
+
+    RegistryDescDto getRegistryDesc(Long rid);
 }

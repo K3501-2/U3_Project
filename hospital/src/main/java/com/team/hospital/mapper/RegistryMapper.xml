@@ -253,4 +253,63 @@
       updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <!--条件查询-->
+  <select id="getRegistryByCondition"
+          parameterType="com.team.hospital.util.RegCondition"
+          resultType="com.team.hospital.dto.RegistryDto">
+    SELECT `registry`.`id`,
+        `patient`.`name`,
+        `patient`.`sex`,
+        `patient`.`id_card` AS cardid,
+        `department`.`name` AS dname,
+        `registry`.`created_time` AS createTime,
+        `registry`.`registry_time` AS  regTime,
+        CASE
+            WHEN `status`=1 THEN '已挂号，未问诊'
+            WHEN `status`=2 THEN '正在问诊'
+            WHEN `status`=3 THEN '结束问诊'
+        END AS sname
+        FROM `registry`
+        LEFT JOIN `patient` ON `registry`.`patient_id`=patient.`id`
+        LEFT JOIN `department` ON `registry`.`department_id`=department.`id`
+        WHERE 1=1
+        <if test="cardId!=null and cardId!=''">
+            AND `patient`.`id_card`=#{cardId,jdbcType=VARCHAR}
+        </if>
+        <if test="departmentId!=null">
+          AND `registry`.`department_id`=#{departmentId,jdbcType=BIGINT}
+        </if>
+        <if test="userId!=null">
+          AND `registry`.`user_id`=#{userId,jdbcType=BIGINT}
+        </if>
+        <if test="status!=null">
+          AND `registry`.`status`=#{status,jdbcType=TINYINT}
+        </if>
+  </select>
+  <select id="getRegistryDesc"
+          parameterType="Long"
+          resultType="com.team.hospital.dto.RegistryDescDto">
+    SELECT
+      `registry`.`id`,
+      `registry`.`created_time` AS regTime,
+      `patient`.`name` AS pname,
+      `patient`.`address` AS paddress,
+      `patient`.`birthday` AS pbirthday,
+      `patient`.`sex` AS psex,
+      `patient`.`id_card` AS pcardid,
+      `department`.`name` AS dname,
+      `room`.`name`  AS rname,
+      `sys_users`.`user_name` AS userName,
+      `medical_advice`.`chief_complaint` AS pinfo,
+      `medical_advice`.`diagnosis` AS zdinfo,
+      `medical_advice`.`created_time`  AS zdtime
+    FROM `registry`
+           LEFT JOIN `patient` ON `registry`.`patient_id`=patient.`id`
+           LEFT JOIN `department` ON `registry`.`department_id`=department.`id`
+           LEFT JOIN `room` ON `registry`.`room_id`=room.`id`
+           LEFT JOIN  `sys_users` ON `registry`.`user_id`=sys_users.`id`
+           LEFT JOIN  `medical_advice` ON `registry`.`id`=medical_advice.`registry_id`
+    WHERE `registry`.`id`=#{id,jdbcType=BIGINT}
+  </select>
 </mapper>

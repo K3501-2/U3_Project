@@ -1,6 +1,10 @@
 package com.team.hospital.service;
 
+import com.github.pagehelper.PageInfo;
+import com.team.hospital.dto.RegistryDescDto;
+import com.team.hospital.dto.RegistryDto;
 import com.team.hospital.entity.Registry;
+import com.team.hospital.util.RegCondition;
 
 /**
  * @Author: 林宇扬
@@ -15,4 +19,10 @@ import com.team.hospital.entity.Registry;
 public interface RegistryService {
     //添加挂号信息
     public int addRegistry(Registry registry);
+
+    //分页查询挂号信息
+    public PageInfo<RegistryDto> searchRegistry(RegCondition condition);
+
+    //查询挂号详情
+    RegistryDescDto getRegistryDesc(Long rid);
 }
