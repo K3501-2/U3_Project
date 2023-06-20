@@ -1,6 +1,7 @@
 package com.team.hospital.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.team.hospital.dto.MenuDto;
 import com.team.hospital.dto.UserDto;
 import com.team.hospital.entity.SysUsers;
 import com.team.hospital.service.UserService;
@@ -143,5 +144,28 @@ public class UserController {
             e.printStackTrace();
             return new Result<>("0", "通过科室查询医生失败");
         }
+    }
+
+    //通过类型查询相关人员 1管理 2挂号 3医生 4，收银员 5.药师
+    @RequestMapping("getUserByType")
+    @ResponseBody
+    public Result<List<UserDto>> getUserByType(Byte type){
+        try {
+            List<UserDto> userList = this.userService.getUsers(type);
+            return new Result<>("1", "通过类型查找医生成功", userList);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result<>("0", "通过类型查找医生失败");
+        }
+    }
+
+    //通过用户的id获权限菜单 getMenu?userId=?
+    @RequestMapping("getMenu")
+    @ResponseBody
+    public Result<List<MenuDto>> getMenu(Long userId){
+        //调用业务
+        List<MenuDto> list = this.userService.getUserMenu(userId);
+        //返回
+        return new Result<>("1", "获取菜单", list);
     }
 }

@@ -18,4 +18,7 @@ public interface PatientService {
 
     //查询单条病人信息
     public Patient getPatient(String cardid);
+
+    //查询单条病人信息
+    public Patient getPatient2(Long id);
 }

@@ -162,3 +162,101 @@ handleClose(done) {
 ```
 
 ### 同步代码需注意事项：
+
+
+
+## 第五次更新
+
+2023年6月19日09:02:35
+
+day22 挂号信息分页展示
+
+### 今日新增：
+
+1. *新增实体类：*
+   1. 挂号信息实体类（RegistryDto.java）新增属性：
+      1. private Long pid;  //病人编号
+      2. private String userName;//医生姓名
+      3. private Byte status;//就诊状态
+   2. 挂号详细信息实体类 ( RegistryDescDto.java ) 新增属性：
+      1. private Long userId;//用户编号
+      2. private Long mId;//医嘱编号
+2. *dao ( mapper )层新增*：
+   1. 通过用户类型查询医生信息( SysUsersMapper.java )→( List&lt;UserDto&gt; getUsers(Byte type) );
+   2. 查看详细挂号信息( RegistryMapper.java )→( List&lt;RegistryDto&gt; getRegistryByCondition2(RegCondition condition);
+3. *Service业务层新增*：
+   1. 通过用户类型查询医生信息业务( UserService )→( List&lt;UserDto&gt; getUsers(Byte type) )；
+   2. 查看详细挂号信息业务( RegisterService )→( PageInfo&lt;RegistryDto&gt; searchRegistry2(RegCondition condition) );
+   3. 医嘱接口&gt;添加医嘱（ MedicalService.java )→( int addMedical(MedicalAdvice advice) ) ;
+4. *控制层接口*：
+   1. 通过用户类型查询医生信息( UserController )→( /user/getUserByType )；
+   2. 查看详细挂号信息业务((RegistryController)→(/registry/regSearch)→调用业务改为“searchRegistry2”；
+5. 对应前端页面更改
+
+### 与示例代码不同：
+
+### 同步代码需注意事项：
+
+1. 所有代码参数类型为了避免出错我统一改为了包装类，可改可不改；
+2. 代码规范美观，希望开始注意，代码的缩进，规范和美观程度，适当添加注释；
+
+
+
+## 第六次更新
+
+2023年6月20日14:52:42
+
+day23 权限动态加载菜单
+
+### 今日新增：
+
+1. *新增实体类：*
+
+   1. 查询菜单实体类 ( MenuDto.java );
+
+      1. private Long pid;  //病人编号
+      2. private String userName;//医生姓名
+      3. private Byte status;//就诊状态
+
+      ​
+
+      1. private Long userId;//用户编号
+      2. private Long mId;//医嘱编号
+
+2. *dao ( mapper )层新增*：
+
+   1. 通过用户查找菜单( SysUsersMapper.java )：
+
+      1. //通过用户编号id找一级菜单
+
+          List&lt;MenuDto&gt; getMenuByUser(Long uid); 
+
+      2. //通过一级菜单的编号查找对应的二级菜单
+
+         List&lt;MenuDto&gt; getMenuByParentId(Long parentId)；
+
+   2. 通过一级菜单的编号查找对应的二级菜单 ( SysUsersMapper.java )→( List&lt;MenuDto&gt; getMenuByParentId(Long parentId) );
+
+3. *Service业务层新增*：
+
+   1. 通过用户查找菜单业务( UserService )：
+
+      1. //查询用户的权限菜单
+
+         List&lt;MenuDto&gt; getUserMenu(Long uid);
+
+4. *控制层接口*：
+
+   1. 通过用户id查看菜单信息( UserController )→( /user/getMenu )；
+
+5. 对应前端页面更改
+
+### 与示例代码不同：
+
+1. 查询菜单实体类 ( MenuDto.java )中类型为Integer的几个id相关属性全部改成了Long，为了和数据库jdbcType=BIGINT对应；
+2. DAO层(SysUsersMapper.java) 下的getMenuByPid(Integer pid)改成了getMenuByParentId(Long parentId);为了更好的读懂代码，和昨天的pid相区分而做修改；
+3. 业务层（UserService.java)下的List&lt;MenuDto&gt; getUserMenu(Long uid)中，二级菜单的变量名字从two改成了secondMenu，主要是two意义不明我感觉有些；
+
+### 同步代码需注意事项：
+
+都比较抠细节，想着是代码的易读性，可修改可不改。

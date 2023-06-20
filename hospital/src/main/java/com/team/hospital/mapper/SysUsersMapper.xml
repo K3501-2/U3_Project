@@ -236,5 +236,35 @@
         WHERE id IN (SELECT user_id
                     FROM `schedule` WHERE department_id=#{departmentId,jdbcType=BIGINT})
   </select>
+  <!--通过类型找医生-->
+  <select id="getUsers" parameterType="Byte" resultType="com.team.hospital.dto.UserDto">
+    SELECT id,user_name AS userName FROM `sys_users` WHERE user_type=#{userType,jdbcType=TINYINT}
+  </select>
 
+  <!--通过用户的id查找一级菜单-->
+  <select id="getMenuByUser"
+          parameterType="Long"
+          resultType="com.team.hospital.dto.MenuDto">
+    SELECT m.`id` AS id, m.`menu_name` AS menuName, m.`menu_url` AS menuUrl,
+           m.`menu_type` AS menuType, m.`parent_id` AS parentId, m.`created_time` AS createdTime,
+           m.`updated_time` AS updatedTime
+    FROM `sys_menus` m
+        LEFT JOIN `sys_roles_menus` rm ON rm.`menu_id`=m.`id`
+        LEFT JOIN `sys_users_roles` ur ON rm.`role_id`=ur.`role_id`
+        LEFT JOIN `sys_users` u ON u.`id`=ur.`user_id`
+    WHERE m.`parent_id` IS NULL
+      AND u.`id`=#{uid,jdbcType=BIGINT}
+  </select>
+  <!--通过一级菜单的编号查找对应的二级菜单-->
+  <select id="getMenuByParentId"
+          parameterType="Long"
+          resultType="com.team.hospital.dto.MenuDto">
+    SELECT m.`id` AS id, m.`menu_name` AS menuName,
+           m.`menu_url` AS menuUrl,
+           m.`menu_type` AS menuType,
+           m.`parent_id` AS parentId,
+           m.`created_time` AS createdTime,
+           m.`updated_time` AS updateTime
+    FROM sys_menus m WHERE m.`parent_Id`=#{parentId,jdbcType=BIGINT}
+  </select>
 </mapper>

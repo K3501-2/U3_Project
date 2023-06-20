@@ -47,7 +47,7 @@ public class RegistryController {
     @ResponseBody
     public Result<Map<String, Object>> regSearch(RegCondition condition){
         //获取分页信息
-        PageInfo<RegistryDto> pageInfo = this.registryService.searchRegistry(condition);
+        PageInfo<RegistryDto> pageInfo = this.registryService.searchRegistry2(condition);
         //返回结果
         /*Map<String,Object> map=new HashMap<>();
         map.put("list",pageInfo.getList());

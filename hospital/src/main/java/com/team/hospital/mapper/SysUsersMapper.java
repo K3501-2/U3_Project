@@ -1,5 +1,6 @@
 package com.team.hospital.mapper;
 
+import com.team.hospital.dto.MenuDto;
 import com.team.hospital.dto.UserDto;
 import com.team.hospital.entity.SysUsers;
 import com.team.hospital.entity.SysUsersExample;
@@ -33,4 +34,13 @@ public interface SysUsersMapper {
 
     //通过科室和时间段查找医生
     List<UserDto> getUsersByD(Long departmentId);
+
+    //通过类型查询相关人员 1管理 2挂号 3医生 4，收银员 5.药师
+    List<UserDto> getUsers(Byte type);
+
+    //通过用户编号id查找一级菜单
+    List<MenuDto> getMenuByUser(Long uid);
+
+    //通过一级菜单的编号查找对应的二级菜单
+    List<MenuDto> getMenuByParentId(Long parentId);
 }

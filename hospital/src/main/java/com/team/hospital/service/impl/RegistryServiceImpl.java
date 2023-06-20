@@ -50,4 +50,21 @@ public class RegistryServiceImpl implements RegistryService {
     public RegistryDescDto getRegistryDesc(Long rid) {
         return this.registryMapper.getRegistryDesc(rid);
     }
+
+    //条件查询
+    @Override
+    public PageInfo<RegistryDto> searchRegistry2(RegCondition condition) {
+        //1.开启分页
+        PageHelper.startPage(condition.getPage(), condition.getPageSize());
+        //2.条件查询所有---调用dao
+        List<RegistryDto> list = registryMapper.getRegistryByCondition2(condition);
+        //返回分页信息
+        return new PageInfo<>(list);
+    }
+
+    //改变问诊状态
+    @Override
+    public int changeStatus(Registry record) {
+        return this.registryMapper.updateByPrimaryKeySelective(record);
+    }
 }

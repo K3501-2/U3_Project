@@ -87,34 +87,12 @@
         <el-container style="height: 580px; border: 1px solid #eee">
             <!--侧边栏区域-->
             <el-aside width="200px" style="background-color: rgb(238, 241, 246)" id="aside">
-                <el-menu :default-openeds="['1','2','3']">
-                    <el-submenu index="1">
-                        <template slot="title"><i class="el-icon-menu"></i>用户管理</template>
+                <el-menu :default-openeds="['1']">
+                    <el-submenu :index="(index+1)+''" v-for="(menu,index) in menuList">
+                        <template slot="title"><i class="el-icon-menu"></i>{{menu.menuName}}</template>
                         <el-menu-item-group>
-                            <el-menu-item index="1-1" @click="toHtml('userList.html')">
-                                <i class="el-icon-help"></i>用户列表
-                            </el-menu-item>
-                            <el-menu-item index="1-2"  @click="toHtml('addUser.html')">
-                                <i class="el-icon-help"></i>添加用户</el-menu-item>
-                        </el-menu-item-group>
-                    </el-submenu>
-                    <el-submenu index="2">
-                        <template slot="title"><i class="el-icon-menu"></i>挂号管理</template>
-                        <el-menu-item-group>
-                            <el-menu-item index="2-1" @click="toHtml('addPatient.html')">
-                                <i class="el-icon-help"></i>创建就诊卡
-                            </el-menu-item>
-                            <el-menu-item index="2-2" @click="toHtml('addRegistry.html')"><i class="el-icon-help"></i>门诊挂号
-                            </el-menu-item>
-                            <el-menu-item index="2-3" @click="toHtml('registryList.html')"><i class="el-icon-help"></i>挂号信息
-                            </el-menu-item>
-                        </el-menu-item-group>
-                    </el-submenu>
-                    <el-submenu index="3">
-                        <template slot="title"><i class="el-icon-menu"></i>门诊管理</template>
-                        <el-menu-item-group>
-                            <el-menu-item index="3-1" @click="toHtml('diagnosticList.html')">
-                                <i class="el-icon-help"></i>就诊信息
+                            <el-menu-item v-for="(cm,index2) in menu.children" :index="(index+1)-(index2+1)" @click="toHtml(cm.menuUrl)">
+                                <i class="el-icon-help"></i>{{cm.menuName}}
                             </el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
@@ -176,6 +154,7 @@
                     headUrl: '',
 					roleName:''
                 },
+                menuList:[],
                 rules: {
                     password: [
                         { required: true, message: '密码不能为空', trigger: 'blur' }
@@ -192,6 +171,13 @@
                 //将json字符串转化为json对象：JSON.parse(json字符串)
                 console.log(localStorage.getItem("userInfo"));
                 this.userObj = JSON.parse(localStorage.getItem("userInfo"));
+                //2.调用后台接口获取用户的权限菜单
+                axios.get("user/getMenu?userId="+this.userObj.id).then((ret) => {
+                   //将返回的数据设置到模型对象中
+                   this.menuList=ret.data.data;
+                }).catch((error) => {
+                    console.log("加载菜单失败.." +  error);
+                });
             },
             methods: {
                 toHtml(page){

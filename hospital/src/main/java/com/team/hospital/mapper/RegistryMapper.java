@@ -24,7 +24,12 @@ public interface RegistryMapper {
 
     int updateByPrimaryKey(Registry record);
 
+    //条件查询挂号信息
     List<RegistryDto> getRegistryByCondition(RegCondition condition);
 
+    //查看某条挂号信息详情
     RegistryDescDto getRegistryDesc(Long rid);
+
+    //条件查询
+    List<RegistryDto> getRegistryByCondition2(RegCondition condition);
 }

@@ -50,4 +50,18 @@ public class PatientController {
         else
             return new Result<>("0", "获取病人信息失败");
     }
+
+    //通过身份证返回病人信息getPatient?id=编号
+    //获取单条病人信息2
+    @RequestMapping("getPatient2")
+    @ResponseBody
+    public Result<Patient> getPatient2(Long id){
+        //调用业务
+        Patient patient = this.patientService.getPatient2(id);
+        //返回
+        if (patient != null)
+            return new Result<>("1", "获取病人信息", patient);
+        else
+            return new Result<>("0", "获取病人信息失败");
+    }
 }

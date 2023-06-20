@@ -1,6 +1,7 @@
 package com.team.hospital.service;
 
 import com.github.pagehelper.PageInfo;
+import com.team.hospital.dto.MenuDto;
 import com.team.hospital.dto.UserDto;
 import com.team.hospital.entity.SysUsers;
 import com.team.hospital.util.PageParmeter;
@@ -30,8 +31,14 @@ public interface UserService {
     public int addUser(SysUsers user);
 
     //查询科室和时间段的医生
-    List<SysUsers> getUsersByDepart(Long departmentId, Byte sign);
+    public List<SysUsers> getUsersByDepart(Long departmentId, Byte sign);
 
     //通过科室查寻医生
-    List<UserDto> getUsersByDe(Long departmentId);
+    public List<UserDto> getUsersByDe(Long departmentId);
+
+    //通过类型查询相关人员 1管理 2挂号 3医生 4，收银员 5.药师
+    public List<UserDto> getUsers(Byte type);
+
+    //查询用户的权限菜单
+    List<MenuDto> getUserMenu(Long uid);
 }

@@ -18,4 +18,5 @@ public interface SysMenusMapper {
     int updateByPrimaryKeySelective(SysMenus record);
 
     int updateByPrimaryKey(SysMenus record);
+
 }

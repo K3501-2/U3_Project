@@ -31,6 +31,9 @@ public class RegistryDescDto {
     private String zdinfo;  //诊断结果
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date zdtime;  //诊断时间
+    //添加用户编号和医嘱编号
+    private Long userId;
+    private Long mId;
 
     public String getId() {
         return id;
@@ -134,5 +137,21 @@ public class RegistryDescDto {
 
     public void setZdtime(Date zdtime) {
         this.zdtime = zdtime;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getmId() {
+        return mId;
+    }
+
+    public void setmId(Long mId) {
+        this.mId = mId;
     }
 }

@@ -2,6 +2,7 @@ package com.team.hospital.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.team.hospital.dto.MenuDto;
 import com.team.hospital.dto.UserDto;
 import com.team.hospital.entity.SysUsers;
 import com.team.hospital.entity.SysUsersExample;
@@ -75,5 +76,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getUsersByDe(Long departmentId) {
         return sysUsersMapper.getUsersByD(departmentId);
+    }
+
+    //通过类型查询相关人员 1管理 2挂号 3医生 4，收银员 5.药师
+    @Override
+    public List<UserDto> getUsers(Byte type) {
+        return sysUsersMapper.getUsers(type);
+    }
+
+    //查询用户的权限菜单
+    @Override
+    public List<MenuDto> getUserMenu(Long uid) {
+        //1.通过用户的id查询对应的一级菜单
+        List<MenuDto> list = this.sysUsersMapper.getMenuByUser(uid);
+        //2.循环一级菜单：通过一级菜单的编号找对应的二级菜单
+        for (MenuDto menuDto:list){
+            //通过一级菜单的编号查询对应的二级菜单
+            List<MenuDto> seconMenu = this.sysUsersMapper.getMenuByParentId(menuDto.getId());
+            //将二级菜单设置到一级菜单
+            menuDto.setChildren(seconMenu);
+        }
+        return list;
     }
 }

@@ -25,4 +25,10 @@ public interface RegistryService {
 
     //查询挂号详情
     RegistryDescDto getRegistryDesc(Long rid);
+
+    //条件查询
+    PageInfo<RegistryDto> searchRegistry2(RegCondition condition);
+
+    //改变问诊状态
+    int changeStatus(Registry record);
 }

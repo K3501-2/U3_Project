@@ -32,4 +32,11 @@ public class PatientServiceImpl implements PatientService {
     public Patient getPatient(String cardid) {
         return this.patientMapper.getPatient(cardid);
     }
+
+    //查询单条病人信息
+
+    @Override
+    public Patient getPatient2(Long id) {
+        return this.patientMapper.selectByPrimaryKey(id);
+    }
 }
