@@ -16,11 +16,11 @@ import java.util.Date;
  */
 public class RegistryDescDto {
     private String id;  //挂号id
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date regTime; //病人挂号时间
     private String pname; //病人姓名
     private String paddress; //病人地址
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date pbirthday; //病人生日
     private String psex;  //性别
     private String pcardId;  //身份证
@@ -29,7 +29,7 @@ public class RegistryDescDto {
     private String userName;  //医生的姓名
     private String pinfo;  //病人的描述
     private String zdinfo;  //诊断结果
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date zdtime;  //诊断时间
     //添加用户编号和医嘱编号
     private Long userId;

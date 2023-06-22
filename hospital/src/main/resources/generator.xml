@@ -21,16 +21,16 @@
       <property name="forceBigDecimals" value="false" />
     </javaTypeResolver>
 
-    <javaModelGenerator targetPackage="com.team.hospital.entity" targetProject="D:\北大青鸟学习\U3\Projects\hospital\src\main\java">
+    <javaModelGenerator targetPackage="com.team.hospital.entity" targetProject="D:\北大青鸟学习\U3\U3_Project\hospital\src\main\java">
       <property name="enableSubPackages" value="true" />
       <property name="trimStrings" value="true" />
     </javaModelGenerator>
 
-    <sqlMapGenerator targetPackage="com.team.hospital.mapper"  targetProject="D:\北大青鸟学习\U3\Projects\hospital\src\main\java">
+    <sqlMapGenerator targetPackage="com.team.hospital.mapper"  targetProject="D:\北大青鸟学习\U3\U3_Project\hospital\src\main\java">
       <property name="enableSubPackages" value="true" />
     </sqlMapGenerator>
 
-    <javaClientGenerator type="XMLMAPPER" targetPackage="com.team.hospital.mapper"  targetProject="D:\北大青鸟学习\U3\Projects\hospital\src\main\java">
+    <javaClientGenerator type="XMLMAPPER" targetPackage="com.team.hospital.mapper"  targetProject="D:\北大青鸟学习\U3\U3_Project\hospital\src\main\java">
       <property name="enableSubPackages" value="true" />
     </javaClientGenerator>
 

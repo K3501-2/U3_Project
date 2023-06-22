@@ -21,7 +21,7 @@ public class MybatisGeneratorUtil {
 			List<String> warnings = new ArrayList<String>();
 			boolean overwrite = true;
 			//File configFile = new File(MybatisGeneratorUtil.class.getResource("/generator.xml").getFile());
-			File configFile = new File("D:\\北大青鸟学习\\U3\\Projects\\hospital\\src\\main\\resources\\generator.xml");
+			File configFile = new File("D:\\北大青鸟学习\\U3\\U3_Project\\hospital\\src\\main\\resources\\generator.xml");
 			ConfigurationParser cp = new ConfigurationParser(warnings);
 			Configuration config = cp.parseConfiguration(configFile);
 			DefaultShellCallback callback = new DefaultShellCallback(overwrite);

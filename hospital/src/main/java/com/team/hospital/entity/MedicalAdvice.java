@@ -1,5 +1,7 @@
 package com.team.hospital.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class MedicalAdvice {
@@ -13,8 +15,10 @@ public class MedicalAdvice {
 
     private String diagnosis;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date createdTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date updatedTime;
 
     public Long getId() {

@@ -1,5 +1,7 @@
 package com.team.hospital.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +21,9 @@ public class MenuDto {
     private String menuUrl;
     private Integer menuType;
     private Long parentId;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date createdTime;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date updatedTime;
     //添加菜单集合属性，表示多个菜单
     List<MenuDto> children;

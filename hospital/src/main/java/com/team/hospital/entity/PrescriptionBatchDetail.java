@@ -1,5 +1,7 @@
 package com.team.hospital.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class PrescriptionBatchDetail {
@@ -11,10 +13,13 @@ public class PrescriptionBatchDetail {
 
     private Integer usedAmount;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date productionDate;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date createdTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date updatedTime;
 
     public Long getId() {
