@@ -5,7 +5,6 @@ import com.team.hospital.dto.MenuDto;
 import com.team.hospital.dto.UserDto;
 import com.team.hospital.entity.SysUsers;
 import com.team.hospital.util.PageParmeter;
-import org.apache.ibatis.annotations.Param;
 
 
 import java.util.List;
@@ -40,5 +39,14 @@ public interface UserService {
     public List<UserDto> getUsers(Byte type);
 
     //查询用户的权限菜单
-    List<MenuDto> getUserMenu(Long uid);
+    public List<MenuDto> getUserMenu(Long uid);
+
+    //通过id查询用户信息
+    public SysUsers getUserById(Long id);
+
+    //修改用户信息
+    public int updateUser(SysUsers record);
+
+    //删除用户信息
+    public int deleteUserById(Long id);
 }

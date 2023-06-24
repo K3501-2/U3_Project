@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>用户管理</title>
+    <title>挂号信息管理</title>
     <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
     <script src="js/vue.js"></script>
     <script src="element-ui/lib/index.js"></script>
@@ -91,7 +91,7 @@
             :total="pagination.total">
     </el-pagination>
     <!--挂号单详情-->
-    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="70%">
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="70%" :before-close="handleClose">
         <h4>病人信息</h4>
         <el-form :model="form" size="mini">
             <el-form-item label="姓名" :label-width="formLabelWidth">
@@ -267,15 +267,15 @@
                     this.dialogFormVisible = true;
                     this.isVisible=false;
                     //调用接口
-                    /*axios.get("/patient/getPatient2?id=" + pid).then((ret) => {
-                        /!*var info = ret.data.data;
-                        this.pinfo = info;*!/
+                    axios.get("/patient/getPatient2?id=" + pid).then((ret) => {
+                        /*var info = ret.data.data;
+                        this.pinfo = info;*/
                         this.pinfo = ret.data.data;
-                    });*/
-                    if (row.status === 1 || row.status === 2){
+                    });
+                    /*if (row.status === 1 || row.status === 2){
                         row.status = 2;
                         this.loadRegDesc(row.id);
-                    } 
+                    } */
                 },
                 getRegistryListByPage() {
                     //获取搜索条件的值,利用双向绑定
@@ -296,6 +296,13 @@
                 handleCurrentChange() {
                     //改了页码重新查询
                     this.loadReg();
+                },
+                handleClose(done) {
+                    this.$confirm('确认关闭？')
+                        .then(_ => {
+                            done();
+                        })
+                        .catch(_ => {});
                 },
                 sexParse(row, column, cellValue) {
                     let str = '';

@@ -105,36 +105,7 @@
                             style="top:80px;left: 120px; width: 100%;height:600px"></iframe>
                 </el-main>
             </el-container>
-            <!--编辑用户信息-->
-            <el-dialog title="编辑个人信息" :visible.sync="dialogFormVisible" width="40%">
-                <el-form :model="userForm" :rules="rules" ref="userForm" label-width="100px" class="demo-ruleForm">
-                    <el-form-item label="用户名" prop="userName">
-                        <el-input v-model="userForm.userName" disabled size="mini"></el-input>
-                    </el-form-item>
-                    <el-form-item label="密码" prop="password">
-                        <el-input type="password" v-model="userForm.password" size="mini"></el-input>
-                    </el-form-item>
-                    <el-form-item label="确认密码" prop="checkPass">
-                        <el-input type="password" v-model="userForm.checkPass" size="mini"></el-input>
-                    </el-form-item>
-                    <el-form-item label="用户图像" prop="headUrl">
-                        <el-upload
-                                size="mini"
-                                class="avatar-uploader"
-                                action="https://jsonplaceholder.typicode.com/posts/"
-                                :show-file-list="false"
-                                :on-success="handleAvatarSuccess"
-                                :before-upload="beforeAvatarUpload">
-                            <img v-if="userForm.headUrl" :src="userForm.headUrl" class="avatar">
-                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                        </el-upload>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" @click="submitForm('userForm')" size="mini">修改</el-button>
-                        <el-button @click="resetForm('userForm')" size="mini">返回</el-button>
-                    </el-form-item>
-                </el-form>
-            </el-dialog>
+
         </el-container>
     </el-container>
 </div>

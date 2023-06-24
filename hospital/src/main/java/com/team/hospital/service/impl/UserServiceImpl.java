@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         //1.开启分页
         PageHelper.startPage(pageParmeter.getPage(), pageParmeter.getPageSize());
         //2.查询所有用户
-        List<SysUsers> list=this.sysUsersMapper.getAllUser();
+        List<SysUsers> list = this.sysUsersMapper.getAllUser();
         //3.返回分页信息
         return new PageInfo<SysUsers>(list);
     }
@@ -97,5 +97,23 @@ public class UserServiceImpl implements UserService {
             menuDto.setChildren(seconMenu);
         }
         return list;
+    }
+
+    //获取用户信息
+    @Override
+    public SysUsers getUserById(Long id) {
+        return this.sysUsersMapper.selectByPrimaryKey(id);
+    }
+
+    //修改用户信息
+    @Override
+    public int updateUser(SysUsers record) {
+        return this.sysUsersMapper.updateByPrimaryKeySelective(record);
+    }
+
+    //删除用户信息
+    @Override
+    public int deleteUserById(Long id) {
+        return this.sysUsersMapper.deleteByPrimaryKey(id);
     }
 }

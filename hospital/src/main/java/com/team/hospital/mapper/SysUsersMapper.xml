@@ -267,4 +267,12 @@
            m.`updated_time` AS updateTime
     FROM sys_menus m WHERE m.`parent_Id`=#{parentId,jdbcType=BIGINT}
   </select>
+  <select id="getUserById"
+          parameterType="Long"
+          resultType="com.team.hospital.entity.SysUsers">
+    SELECT `sys_users`.*, `sys_roles`.`role_name` AS typename
+    FROM `sys_users`
+           LEFT JOIN `sys_roles` ON `sys_users`.`user_type`=`sys_roles`.`id`
+    WHERE `sys_users`.`id`=#{id,jdbcType=BIGINT}
+  </select>
 </mapper>

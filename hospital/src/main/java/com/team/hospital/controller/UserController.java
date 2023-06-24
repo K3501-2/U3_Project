@@ -101,16 +101,19 @@ public class UserController {
         return new Result<>("0", "上传文件失败");
     }
 
+    //添加用户
     @RequestMapping("addUser")
     @ResponseBody
-    public Result addUser(@RequestBody SysUsers users){ //将前端传递的json对象自动转化java对象（要求json的键名必需和实体的属性名相同）
+    public Result addUser(@RequestBody SysUsers users, HttpSession session){ //将前端传递的json对象自动转化java对象（要求json的键名必需和实体的属性名相同）
         //使用实体类接受客户端数据
         //1.设置时间
         users.setCreatedTime(new Date());
         //2.对密码加密码
         users.setPassword(MD5Utils.md5Encrypt(users.getPassword()));
-        //3.设置创建的用户id，暂时给固定式1，以后从session中获取
-        users.setCreatedUserId(new Long(1));
+        //3.设置创建的用户id，从session中获取
+        //users.setCreatedUserId(new Long("1"));
+        SysUsers sysUsers = (SysUsers) session.getAttribute("userInfo");
+        users.setCreatedUserId(sysUsers.getId());
         //调用业务实现添加
         int result = this.userService.addUser(users);
         if(result > 0){
@@ -167,5 +170,50 @@ public class UserController {
         List<MenuDto> list = this.userService.getUserMenu(userId);
         //返回
         return new Result<>("1", "获取菜单", list);
+    }
+
+    //通过id获取单条用户信息 getUserById?id=?
+    @RequestMapping("getUserById")
+    @ResponseBody
+    public Result<SysUsers> getUserById(Long id){
+        SysUsers user = this.userService.getUserById(id);
+        if (user != null){
+            return new Result<>("1", "查询用户成功", user);
+        }
+        return new Result<>("0", "查询用户失败");
+    }
+
+    //修改用户信息
+    @RequestMapping("updateUser")
+    @ResponseBody
+    public Result updateUser(@RequestBody SysUsers record, HttpSession session){
+        //使用实体类接受客户端数据
+        //1.设置修改时间
+        record.setUpdatedTime(new Date());
+        //2.对密码加密码
+        record.setPassword(MD5Utils.md5Encrypt(record.getPassword()));
+        //3.设置创建的用户id，从session中获取
+        //record.setCreatedUserId(new Long("1"));
+        SysUsers sysUsers = (SysUsers) session.getAttribute("userInfo");
+        record.setCreatedUserId(sysUsers.getId());
+        //调用业务实现添加
+        int result = this.userService.updateUser(record);
+        if(result > 0){
+            return new Result("1","修改用户成功");
+        } else {
+            return new Result("0","修改用户失败");
+        }
+    }
+
+    //删除用户信息
+    @RequestMapping("delUser")
+    @ResponseBody
+    public Result delUser(Long id){
+        int result = this.userService.deleteUserById(id);
+        if(result > 0){
+            return new Result("1","删除用户成功");
+        } else {
+            return new Result("0","删除用户失败");
+        }
     }
 }

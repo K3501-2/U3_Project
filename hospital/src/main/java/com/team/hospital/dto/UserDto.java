@@ -12,6 +12,7 @@ package com.team.hospital.dto;
  */
 public class UserDto {
     private Long id;
+
     private String userName;
 
     public Long getId() {

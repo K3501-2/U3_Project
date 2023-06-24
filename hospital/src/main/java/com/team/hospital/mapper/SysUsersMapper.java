@@ -43,4 +43,7 @@ public interface SysUsersMapper {
 
     //通过一级菜单的编号查找对应的二级菜单
     List<MenuDto> getMenuByParentId(Long parentId);
+
+    //通过id查找单条用户信息
+    SysUsers getUserById(Long id);
 }

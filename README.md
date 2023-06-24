@@ -272,3 +272,135 @@ day23 权限动态加载菜单
 ```java
 @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
 ```
+
+
+
+## 第七次更新
+
+2023年6月22日12:32:18
+
+### 今日新增：
+
+1. *新增实体类：*
+
+   1. 查询菜单实体类 ( MenuDto.java );
+
+      1. private Long pid;  //病人编号
+      2. private String userName;//医生姓名
+      3. private Byte status;//就诊状态
+
+      ​
+
+      1. private Long userId;//用户编号
+      2. private Long mId;//医嘱编号
+
+2. *dao ( mapper )层新增*：
+
+   1. 通过用户查找菜单( SysUsersMapper.java )：
+
+      1. //通过用户编号id找一级菜单
+
+         List&lt;MenuDto&gt; getMenuByUser(Long uid); 
+
+      2. //通过一级菜单的编号查找对应的二级菜单
+
+         List&lt;MenuDto&gt; getMenuByParentId(Long parentId)；
+
+   2. 通过一级菜单的编号查找对应的二级菜单 ( SysUsersMapper.java )→( List&lt;MenuDto&gt; getMenuByParentId(Long parentId) );
+
+3. *Service业务层新增*：
+
+   1. 通过修用户信息业务( UserService )：
+
+      1. //修改用户信息
+
+         public int updateUser(SysUsers record);
+
+      2. 1
+
+4. *控制层接口*：
+
+   1. 通过修改信息( UserController )→( /user/updateUser )；
+
+5. 对应前端页面更改
+
+### 与示例代码不同：
+
+1. 查询菜单实体类 ( MenuDto.java )中类型为Integer的几个id相关属性全部改成了Long，为了和数据库jdbcType=BIGINT对应；
+2. DAO层(SysUsersMapper.java) 下的getMenuByPid(Integer pid)改成了getMenuByParentId(Long parentId);为了更好的读懂代码，和昨天的pid相区分而做修改；
+3. 业务层（UserService.java)下的List&lt;MenuDto&gt; getUserMenu(Long uid)中，二级菜单的变量名字从two改成了secondMenu，主要是two意义不明我感觉有些；
+
+### 同步代码需注意事项：
+
+都比较抠细节，想着是代码的易读性，可修改可不改。
+
+
+
+## 第八次更新
+
+2023年6月24日16:24:19
+
+### 今日新增：
+
+1. 添加日志
+
+2. *新增实体类：*
+
+   null
+
+3. *dao ( mapper )层新增*：
+
+   1. 新增用户业务( SysUsersMapper.java )：
+
+      1. ```java
+         //通过id查找单条用户信息
+         SysUsers getUserById(Long id);
+         ```
+
+      2. ```java
+         //删除用户信息
+         public int deleteUserById(Long id);
+         ```
+
+   2. 通过一级菜单的编号查找对应的二级菜单 ( SysUsersMapper.java )→( List&lt;MenuDto&gt; getMenuByParentId(Long parentId) );
+
+4. *Service业务层新增*：
+
+   1. 新增用户业务( UserService )：
+
+      1. ```java
+         //通过id查询用户信息
+         public SysUsers getUserById(Long id);
+         ```
+
+      2. ```java
+         //修改用户信息
+         public int updateUser(SysUsers record);
+         ```
+
+5. *控制层接口*：
+
+   1. 用户控制器（UserController.java）：
+
+      1. ```java
+         //通过id获取单条用户信息 getUserById?id=?
+         @RequestMapping("getUserById")
+         @ResponseBody
+         public Result<SysUsers> getUserById(Long id)
+         ```
+
+      2. ```java
+          //修改用户信息
+             @RequestMapping("updateUser")
+             @ResponseBody
+             public Result updateUser(@RequestBody SysUsers record, HttpSession session)
+         ```
+
+      3. ```java
+         //删除用户信息
+             @RequestMapping("delUser")
+             @ResponseBody
+             public Result delUser(Long id)
+         ```
+
+6. 对应前端页面更改
