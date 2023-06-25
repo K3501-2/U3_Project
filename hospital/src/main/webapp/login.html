@@ -73,7 +73,8 @@
                         password:this.loginForm.password
                     }
                 }).then((ret) => {
-                    //console.log(ret.data);
+                    console.log('/user/login');
+
                     if (ret.data.code == 1000){ //1000表示成功 1001表示失败
                         //利用localStorage保存用户信息
                         // 注意:值只能字符串，JSON.stringify(json对象转化为字符串)

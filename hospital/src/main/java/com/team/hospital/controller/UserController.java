@@ -44,9 +44,15 @@ public class UserController {
     @RequestMapping("login")
     @ResponseBody
     public Result<SysUsers> login(String username, String password, HttpSession session, HttpServletRequest request){
+        System.out.println("开始登录验证");
+
         //调用业务
         SysUsers sysUsers = userService.login(username, password);
+        // 登录验证的代码逻辑
+        System.out.println("登录验证完成");
 
+        System.out.println(username);
+        System.out.println(password);
         if (sysUsers == null) {
             return new Result<>("1001", "登入失败");
         } else {
@@ -54,6 +60,8 @@ public class UserController {
             session.setAttribute("userInfo", sysUsers);
             // 登录验证通过后，设置登录状态
             request.getSession().setAttribute("loggedIn", true);
+            System.out.println(sysUsers.getAccount());
+            System.out.println(sysUsers.getPassword());
             //表示登入成功
             return new Result<SysUsers>("1000", "登入成功", sysUsers);
         }
