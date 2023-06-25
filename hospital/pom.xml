@@ -32,7 +32,6 @@
       <artifactId>pagehelper</artifactId>
       <version>5.0.0</version>
     </dependency>
-
     <!-- junit测试工具 -->
     <dependency>
       <groupId>junit</groupId>
