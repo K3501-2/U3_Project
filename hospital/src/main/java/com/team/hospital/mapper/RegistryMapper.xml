@@ -305,9 +305,14 @@
       `medical_advice`.`diagnosis` AS zdinfo,
       `medical_advice`.`created_time`  AS zdtime,
       `sys_users`.`id` AS userId,
-      `medical_advice`.`id` AS mid
-    FROM `registry`
-           LEFT JOIN `patient` ON `registry`.`patient_id`=patient.`id`
+      `medical_advice`.`id` AS mid,
+    CASE
+        WHEN `registry`.`status`=1 THEN '已挂号，未问诊'
+        WHEN `registry`.`status`=2 THEN '正在问诊'
+        WHEN `registry`.`status`=3 THEN '结束问诊'
+    END AS sname
+        FROM `registry`
+            LEFT JOIN `patient` ON `registry`.`patient_id`=patient.`id`
            LEFT JOIN `department` ON `registry`.`department_id`=department.`id`
            LEFT JOIN `room` ON `registry`.`room_id`=room.`id`
            LEFT JOIN  `sys_users` ON `registry`.`user_id`=sys_users.`id`

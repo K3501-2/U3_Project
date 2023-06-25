@@ -68,4 +68,19 @@ public class RegistryController {
         //返回
         return new Result<>("1", "查询挂号详情成功", dto);
     }
+
+    //修改状态信息
+    @RequestMapping("alterStatus")
+    @ResponseBody
+    public Result alterStatus(Long id, Byte status){
+        Registry registry = new Registry();
+        registry.setId(id);
+        registry.setStatus(status);
+
+        int result = this.registryService.changeStatus(registry);
+        if (result > 0)
+            return new Result<>("1", "修改成功！");
+        else
+            return new Result<>("0", "修改失败!");
+    }
 }

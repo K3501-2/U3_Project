@@ -34,6 +34,7 @@ public class RegistryDescDto {
     //添加用户编号和医嘱编号
     private Long userId;
     private Long mId;
+    private String sname;
 
     public String getId() {
         return id;
@@ -153,5 +154,13 @@ public class RegistryDescDto {
 
     public void setmId(Long mId) {
         this.mId = mId;
+    }
+
+    public String getSname() {
+        return sname;
+    }
+
+    public void setSname(String sname) {
+        this.sname = sname;
     }
 }
