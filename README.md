@@ -394,6 +394,7 @@ day23 权限动态加载菜单
              @RequestMapping("updateUser")
              @ResponseBody
              public Result updateUser(@RequestBody SysUsers record, HttpSession session)
+          ```
          ```
 
       3. ```java
@@ -404,3 +405,60 @@ day23 权限动态加载菜单
          ```
 
 6. 对应前端页面更改
+
+
+
+## 第九次更新
+
+2023年6月25日10:50:16
+
+挂号状态业务改变
+
+登录拦截器
+
+### 今日新增：
+
+1. 添加日志
+
+2. *新增实体类：*
+
+   null
+
+3. *新增拦截器：*
+
+   com/team/hospital/interceptor/LoginInterceptor.java
+
+4. *dao ( mapper )层新增*：
+
+   null
+
+5. *Service业务层新增*：
+
+   1. 挂号状态业务 (RegistryService.java)：
+
+      1. ```java
+         //改变问诊状态
+         int changeStatus(Registry record);
+         ```
+
+6. *控制层接口*：
+
+   1. 挂号信息控制器（RegistryController.java）：
+
+      1. ```java
+         //修改状态信息
+         @RequestMapping("alterStatus")
+         @ResponseBody
+         public Result alterStatus(Long id, Byte status)
+         ```
+
+   2. 用户控制器（UserController.java）：
+
+      1. 在登录成功后添加一句语句设置登录状态：
+
+         ```java
+         // 登录验证通过后，设置登录状态
+         request.getSession().setAttribute("loggedIn", true);
+         ```
+
+7. 对应前端页面更改

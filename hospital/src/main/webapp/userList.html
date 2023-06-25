@@ -8,12 +8,40 @@
     <script src="element-ui/lib/index.js"></script>
     <script src="js/axios-0.18.0.js"></script>
     <style type="text/css">
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 78px;
+            height: 78px;
+            line-height: 78px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 78px;
+            height: 78px;
+            display: block;
+        }
+
         .el-form-item {
             width: 400px;
         }
         .el-dialog__body {
             padding: 5px 30px;
         }
+
     </style>
 </head>
 <body>
@@ -307,6 +335,12 @@
                 //this.userForm.headUrl = URL.createObjectURL(file.raw);
                 this.userForm.headUrl = res.data;
                 console.log(res.data);
+                // 获取回显图片元素
+                const imgElement = document.querySelector('.image-container img');
+
+                // 设置图片的宽度和高度
+                imgElement.style.width = '200px'; // 设置宽度为 200px
+                imgElement.style.height = '200px'; // 设置高度为 200px
             },
             //上传前准备
             beforeAvatarUpload(file) {

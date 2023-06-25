@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class UserController {
     // user/login?username=?&password=?
     @RequestMapping("login")
     @ResponseBody
-    public Result<SysUsers> login(String username, String password, HttpSession session){
+    public Result<SysUsers> login(String username, String password, HttpSession session, HttpServletRequest request){
         //调用业务
         SysUsers sysUsers = userService.login(username, password);
 
@@ -51,6 +52,8 @@ public class UserController {
         } else {
             //将用户信息保存到session
             session.setAttribute("userInfo", sysUsers);
+            // 登录验证通过后，设置登录状态
+            request.getSession().setAttribute("loggedIn", true);
             //表示登入成功
             return new Result<SysUsers>("1000", "登入成功", sysUsers);
         }
