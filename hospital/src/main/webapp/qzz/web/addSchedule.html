@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>医生排期</title>
+    <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+    <script src="js/vue.js"></script>
+    <script src="element-ui/lib/index.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+    <style>
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 78px;
+            height: 78px;
+            line-height: 78px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 78px;
+            height: 78px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div id="div">
+    <b style="font-size: 15px;">排期信息</b>
+    <div style="margin-top: 30px;margin-bottom: 20px;padding-left: 10px">
+        <el-row>
+            <el-col :span=4>
+                就诊科室:
+                <el-select v-model="scheduleParam.departmentId" placeholder="请选择"
+                           size="mini" style="width: 110px">
+                    <el-option
+                            v-for="item in departmentList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-col>
+
+            <el-col :span=4>
+                挂号医师:
+                <el-select v-model="scheduleParam.userId" placeholder="请选择" size="mini" style="width: 110px">
+                    <el-option
+                            v-for="item in docterList"
+                            :key="item.id"
+                            :label="item.userName"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col :span=5 style="width: 500px">
+                问诊时间:
+                <el-date-picker
+                        size="mini"
+                        v-model="value1"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期">
+                </el-date-picker>
+            </el-col>
+            <el-col :span=4>
+                <el-button @click="resetForm()" size="mini" style="width: 60px">清除
+                </el-button>
+                <el-button type="primary" @click="getRegistryListByPage()" size="mini" style="width: 100px">查询
+                </el-button>
+            </el-col>
+        </el-row>
+    </div>
+    <div style="width: 90px">
+        <el-button type="primary" size="mini" @click="show()">添加医生排期</el-button>
+    </div>
+    <el-table :data="scheduleList">
+        <el-table-column prop="id" label="编号" width="60">
+        </el-table-column>
+        <el-table-column prop="userName" label="医生名称" width="120">
+        </el-table-column>
+        <el-table-column prop="departmentName" label="科室名称" width="120">
+        </el-table-column>
+        <el-table-column prop="roomName" label="房间名称" width="120">
+        </el-table-column>
+        <el-table-column prop="sign" label="时间段" width="90" :formatter="signParse">
+        </el-table-column>
+        <el-table-column prop="quantity" label="诊断病人数量" width="180">
+        </el-table-column>
+        <el-table-column prop="remainingQuantity" label="剩余诊断病人数量" width="240">
+        </el-table-column>
+        <el-table-column prop="inquiryTime" label="问诊时间" width="120" :formatter="dateFormat">
+        </el-table-column>
+        <el-table-column
+                fixed="right"
+                label="操作"
+                width="200">
+            <el-button-group slot-scope="scope">
+                <el-tooltip hide-after="900" open-delay="300" content="删除" placement="top">
+                    <el-popover
+                            placement="bottom"
+                            width="160"
+                            :v-model="visible">
+                        <p><i class="el-icon-info" style="color: #ff0000"></i>是否删除?</p>
+                        <div style="text-align: right; margin: 0">
+                            <el-button size="mini" type="text" @click="cancel()">取消</el-button>
+                            <el-button type="primary" size="mini" @click="deluser(scope.row)">确认删除</el-button>
+                        </div>
+                        <el-button type="primary" icon="el-icon-delete" slot="reference"></el-button>
+                    </el-popover>
+                </el-tooltip>
+            </el-button-group>
+        </el-table-column>
+    </el-table>
+    <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="pagination.currentPage"
+            :page-sizes="[4,5,8]"
+            :page-size.sync="pagination.pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pagination.total">
+    </el-pagination>
+    <el-dialog title="添加医生排期" :visible.sync="dialogFormVisible" @closed="closeDialog()">
+        <el-form :model="schedule" :rules="rules" size="mini" ref="schedule" label-width="100px">
+            <el-form-item label="排班日期" prop="inquiryTime">
+                <el-col>
+                    <el-date-picker
+                            :picker-options="pickerOptions"
+                            type="date"
+                            placeholder="选择日期"
+                            v-model="schedule.inquiryTime">
+                    </el-date-picker>
+                </el-col>
+            </el-form-item>
+
+            <el-form-item label="就诊科室" prop="departmentId">
+                <el-select v-model="schedule.departmentId" placeholder="请选择">
+                    <el-option
+                            v-for="item in departmentList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+
+            <el-form-item label="就诊医师" prop="userId">
+                <el-select v-model="schedule.userId" placeholder="请选择">
+                    <el-option
+                            v-for="item in docterList"
+                            :key="item.id"
+                            :label="item.userName"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+
+            <el-form-item label="就诊房间" prop="roomId">
+                <el-select v-model="schedule.roomId" placeholder="请选择">
+                    <el-option
+                            v-for="item in roomList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+
+            <el-form-item label="时间段" prop="sign">
+                <el-select v-model="schedule.sign" placeholder="请选择">
+                    <el-option
+                            v-for="item in signList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+
+            <el-form-item>
+                <el-button type="primary" @click="submitForm('schedule')">保存</el-button>
+                <el-button @click="closeDialog()">返回</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+</div>
+</body>
+<script type="application/javascript">
+    new Vue({
+            el: '#div',
+            data() {
+                return {
+                    visible: false,
+                    dialogFormVisible: false,
+                    pickerOptions: {
+                        disabledDate(time) {
+                            return time.getTime() < Date.now() - 8.64e7;
+                        }
+                    },
+                    value1: [],
+                    value2: '',
+                    scheduleList: [],
+                    docterList: [],
+                    departmentList: [],
+                    roomList: [],
+                    signList: [
+                        {id: 1, name: '上午'},
+                        {id: 2, name: '下午'}
+                    ],
+                    schedule: {
+                        userId: '',
+                        departmentId: '',
+                        roomId: '',
+                        sign: '',
+                        inquiryTime: ''
+                    },
+                    scheduleParam: {
+                        userId: null,
+                        departmentId: null,
+                        beginTime: null,
+                        endTime: null
+                    },
+                    pagination: {
+                        currentPage: 1,
+                        pageSize: 4,
+                        total: null
+                    },
+                    rules: {
+                        userId: [
+                            {required: true, message: '就诊医师不能为空', trigger: 'blur'}
+                        ],
+                        departmentId: [
+                            {required: true, message: '就诊科室不能为空', trigger: 'blur'}
+                        ],
+                        roomId: [
+                            {required: true, message: '就诊房间不能为空', trigger: 'blur'}
+                        ],
+                        sign: [
+                            {required: true, message: '时间段不能为空', trigger: 'blur'}
+                        ],
+                        inquiryTime: [
+                            {required: true, message: '排班日期不能为空', trigger: 'blur'}
+                        ]
+                    }
+                }
+            },
+            methods: {
+                getRegistryListByPage() {
+                    this.scheduleParam.beginTime = this.value1[0];
+                    this.scheduleParam.endTime = this.value1[1];
+                    this.pagination.currentPage = 1;
+                    this.all();
+                },
+                all() {
+                    axios.post("schedule/all", {
+                        page: this.pagination.currentPage,
+                        pageSize: this.pagination.pageSize,
+                        departmentId: this.scheduleParam.departmentId,
+                        userId: this.scheduleParam.userId,
+                        beginTime: this.scheduleParam.beginTime,
+                        endTime: this.scheduleParam.endTime
+                    }).then((user) => {
+                        // console.log(user);
+                        this.scheduleList = user.data.data.list;
+                        this.pagination.total = user.data.data.totalRecord;
+                    }).catch((error) => {
+                        console.log("调用接口失败！" + error);
+                    });
+                },
+                //功能：改变查询每页显示的条数，pagination组件会自动传递选择的pageSize
+                handleSizeChange(pageSize) {
+                    this.pagination.pageSize = pageSize;
+                    this.pagination.currentPage = 1;
+                    this.all();
+                },
+                //功能：翻页查询，pagination组件会自动传递当前页号currentPage
+                handleCurrentChange(currentPage) {
+                    this.pagination.currentPage = currentPage;
+                    this.all();
+                },
+                show() {
+                    this.dialogFormVisible = true;
+                },
+                closeDialog() {
+                    this.dialogFormVisible = false;
+                },
+                submitForm(formName) {
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            axios.post("schedule/add", this.schedule).then((user) => {
+                                if (user.data.code === '1') {
+                                    this.schedule = this.$options.data().schedule;
+                                    this.$alert('保存成功', '信息', {
+                                        confirmButtonText: '确定',
+                                        callback: action => {
+                                            this.closeDialog();
+                                            this.all();
+                                        }
+                                    });
+                                } else {
+                                    this.$alert('保存失败', '信息', {
+                                        confirmButtonText: '确定'
+                                    });
+                                }
+                            }).catch((error) => {
+                                console.log("调用接口失败！" + error);
+                            });
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                },
+                dateFormat: function (row, column) {
+                    const date = new Date(row[column.property]); // 将时间戳转换为日期对象
+                    const year = date.getFullYear();
+                    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                    const day = ("0" + date.getDate()).slice(-2);
+                    const hour = ("0" + date.getHours()).slice(-2);
+                    const minute = ("0" + date.getMinutes()).slice(-2);
+                    const second = ("0" + date.getSeconds()).slice(-2);
+                    return `${year}-${month}-${day}`;
+                },
+                signParse(row, column, cellValue) {
+                    let str = '';
+                    switch (cellValue) {
+                        case 2:
+                            str = "下午";
+                            break;
+                        case 1:
+                            str = "上午";
+                            break;
+                    }
+                    return str;
+                },
+                resetForm() {
+                    this.scheduleParam = this.$options.data().scheduleParam;
+                    this.value1 = this.$options.data().value1;
+                },
+                cancel() {
+                    this.visible = false;
+                },
+                deluser(row) {
+                    axios.get("schedule/del?id=" + row.id).then((user) => {
+                        if (user.data.code == 1) {
+                            this.$message({
+                                message: '删除成功',
+                                type: 'success'
+                            });
+                            this.visible = false;
+                            location.reload();
+                        } else {
+                            this.$message.error('删除失败');
+                        }
+                    }).catch((error) => {
+                        console.log("调用接口失败！" + error);
+                    });
+                }
+            },
+            mounted: function () {
+                axios.get("sysuser/getUserName2?userType=3").then((user) => {
+                    this.docterList = user.data.data;
+                }).catch((error) => {
+                    console.log("调用接口失败！" + error);
+                });
+
+                axios.get("department/allDepartment").then((user) => {
+                    this.departmentList = user.data.data;
+                }).catch((error) => {
+                    console.log("调用接口失败！" + error);
+                });
+
+                axios.get("room/all").then((user) => {
+                    this.roomList = user.data.data;
+                }).catch((error) => {
+                    console.log("调用接口失败！" + error);
+                });
+
+                this.all();
+            }
+        }
+    );
+</script>
+</html>
