@@ -1,9 +1,21 @@
 package com.team.hospital.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
+/**
+ * @Author: 林宇扬
+ * @Date: 2023/6/26 16:42
+ * @Java version: 1.8.0_361
+ * @Project U3_Project
+ * @Package com.team.hospital.dto
+ * @Classname ScheduleDto
+ * @Created by Administrator
+ * @Description:NULL
+ */
 public class ScheduleDto {
-    private Long id;
+    private Long id;//排期表id
 
     private String userName;
 
@@ -17,6 +29,7 @@ public class ScheduleDto {
 
     private Integer remainingQuantity;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date inquiryTime;
 
     public Long getId() {

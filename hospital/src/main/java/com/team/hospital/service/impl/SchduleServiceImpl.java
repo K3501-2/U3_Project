@@ -12,8 +12,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @Author: 林宇扬
+ * @Date: 2023/6/26 16:49
+ * @Java version: 1.8.0_361
+ * @Project U3_Project
+ * @Package com.team.hospital.service.impl
+ * @Classname SchduleServiceImpl
+ * @Created by Administrator
+ * @Description:NULL
+ */
 @Service
-public class ScheduleServiceImpl implements ScheduleService {
+public class SchduleServiceImpl implements ScheduleService {
     @Autowired
     private ScheduleMapper scheduleMapper;
 

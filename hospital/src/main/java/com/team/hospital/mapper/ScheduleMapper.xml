@@ -67,6 +67,37 @@
     from schedule
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <!--查询所有-->
+  <select id="getSchedule"
+          resultType="com.team.hospital.dto.ScheduleDto"
+          parameterType="com.team.hospital.util.ScheduleParam">
+    SELECT `schedule`.`id`,
+      `sys_users`.`user_name` AS userName,
+      `department`.`name` AS departmentName,
+      `room`.`name` AS roomName,
+      `schedule`.`sign`,
+      `schedule`.`quantity`,
+      `schedule`.`remaining_quantity` AS remainingQuantity,
+      `schedule`.`inquiry_time` AS inquiryTime
+    FROM `schedule`
+        LEFT JOIN `sys_users` ON `sys_users`.`id`=`schedule`.`user_id`
+        LEFT JOIN `department` ON `department`.`id`=`schedule`.`department_id`
+        LEFT JOIN `room` ON `room`.`id`=`schedule`.`room_id`
+    WHERE 1=1
+    <if test="beginTime != null">
+      AND `schedule`.`inquiry_time` >= #{beginTime}
+    </if>
+    <if test="endTime != null">
+      AND `schedule`.`inquiry_time` &lt;= #{endTime}
+    </if>
+    <if test="departmentId != null">
+      AND `schedule`.`department_id` = #{departmentId}
+    </if>
+    <if test="userId != null">
+      AND `schedule`.`user_id` = #{userId}
+    </if>
+    ORDER BY `schedule`.`inquiry_time` DESC
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from schedule
     where id = #{id,jdbcType=BIGINT}

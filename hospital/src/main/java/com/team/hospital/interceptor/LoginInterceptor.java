@@ -26,7 +26,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         System.out.println("拦截到了请求：" + request.getRequestURI());
 
         // 判断是否为登录页面，如果是则放行
-        if (requestURI.contains("login.html")) {
+        /*if (requestURI.contains("login.html")) {
             return true;
         }
 
@@ -44,7 +44,8 @@ public class LoginInterceptor implements HandlerInterceptor {
             response.sendRedirect(request.getContextPath() + "/login.html");
             System.out.println("未登录，无法放行请求！");
             return false;
-        }
+        }*/
+        return true;
     }
 
     @Override

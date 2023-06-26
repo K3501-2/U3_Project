@@ -87,7 +87,8 @@
         <el-container style="height: 580px; border: 1px solid #eee">
             <!--侧边栏区域-->
             <el-aside width="200px" style="background-color: rgb(238, 241, 246)" id="aside">
-                <el-menu :default-openeds="['1']">
+                <!--默认展示 :default-openeds="['1']"-->
+                <el-menu  unique-opened="unique-opened">
                     <el-submenu :index="(index+1)+''" v-for="(menu,index) in menuList">
                         <template slot="title"><i class="el-icon-menu"></i>{{menu.menuName}}</template>
                         <el-menu-item-group>
@@ -151,6 +152,17 @@
                 });
             },
             methods: {
+                handleOpen(key, keyPath) {
+                    // 子菜单展开时的回调
+                    this.activeIndex = key;
+                },
+                handleClose(key, keyPath) {
+                    // 子菜单关闭时的回调
+                    if (this.activeIndex === key) {
+                        // 如果当前子菜单是选中状态，则阻止子菜单缩回去
+                        return false;
+                    }
+                },
                 toHtml(page){
                     this.iframeSrc = page;
                 },
@@ -161,8 +173,15 @@
                 },
                 logout(){
                     //请求后台，在Servlet中注销用户
-                    //跳转到登录页面
-                    location.href='login.html';
+                    axios.get("user/exit").then((ret)=>{
+                        if(ret.data.code === "1"){
+                            //跳转到登录页面
+                            localStorage.removeItem('userInfo')
+                            location.href='login.html';
+                        }
+                    }).catch((error)=>{
+                        console.log("接口出错"+error)
+                    });
                 },
                 //上传成功
                 handleAvatarSuccess(res, file) {

@@ -1,7 +1,9 @@
 package com.team.hospital.mapper;
 
+import com.team.hospital.dto.ScheduleDto;
 import com.team.hospital.entity.Schedule;
 import com.team.hospital.entity.ScheduleExample;
+import com.team.hospital.util.ScheduleParam;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -28,4 +30,7 @@ public interface ScheduleMapper {
             @Param(value = "roomId") Long roomId,
             @Param(value = "sign") Byte sign
     );
+
+    //查询所有
+    List<ScheduleDto> getSchedule(ScheduleParam scheduleParam);
 }

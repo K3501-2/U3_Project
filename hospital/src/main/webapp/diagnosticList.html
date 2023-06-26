@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>挂号信息管理</title>
+    <title>就诊信息管理</title>
     <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
     <script src="js/vue.js"></script>
     <script src="element-ui/lib/index.js"></script>
@@ -20,7 +20,7 @@
 </head>
 <body>
 <div id="div">
-    <b style="font-size: 15px;">挂号信息管理</b>
+    <b style="font-size: 15px;">就诊信息管理</b>
     <div style="margin-top: 30px;margin-bottom: 20px;padding-left: 10px">
         <el-row>
             <el-col :span=5>
@@ -50,6 +50,8 @@
                 </el-select>
             </el-col>
             <el-col :span=4>
+                <el-button @click="resetForm()" size="mini" style="width: 60px">清除
+                </el-button>
                 <el-button type="primary" @click="getRegistryListByPage()" size="mini" style="width: 100px">查询
                 </el-button>
             </el-col>
@@ -348,6 +350,11 @@
                 },
                 refreshPage() {
                     location.reload(); // 刷新当前页面
+                },
+                resetForm() {
+                    this.searchForm.idCard = ''; // 清空身份证号
+                    this.searchForm.userId = ''; // 清空挂号医师
+                    this.searchForm.status = ''; // 清空挂号单状态
                 }
             }
         }

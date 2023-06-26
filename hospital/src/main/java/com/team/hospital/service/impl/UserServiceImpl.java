@@ -74,8 +74,14 @@ public class UserServiceImpl implements UserService {
 
     //通过科室查寻医生
     @Override
-    public List<UserDto> getUsersByDe(Long departmentId) {
+    public List<UserDto> getUsersByD(Long departmentId) {
         return sysUsersMapper.getUsersByD(departmentId);
+    }
+
+    //通过科室查寻医生
+    @Override
+    public List<UserDto> getUsersByDe(Long departmentId) {
+        return sysUsersMapper.getUsersByDe(departmentId);
     }
 
     //通过类型查询相关人员 1管理 2挂号 3医生 4，收银员 5.药师

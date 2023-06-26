@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 /**
  * @Author: 林宇扬
  * @Date: 2023/6/14 23:43
@@ -31,6 +33,19 @@ public class RoomController {
         try {
             RoomDto rooms = roomService.getRoomByDtd(departmentId, uid, sign);
             return new Result<>("1", "查询房间成功", rooms);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result<>("0", "查询房间信息失败");
+        }
+    }
+
+    //通过科室获取所有的房间  getRoomByD?departmentid=&sign=&uid
+    @RequestMapping("getRoomByDepart")
+    @ResponseBody
+    public Result<List<RoomDto>> getRoomByDepart(Long departmentId){
+        try {
+            List<RoomDto> roomList = roomService.getRoomByDepart(departmentId);
+            return new Result<>("1", "查询房间成功", roomList);
         }catch (Exception e){
             e.printStackTrace();
             return new Result<>("0", "查询房间信息失败");

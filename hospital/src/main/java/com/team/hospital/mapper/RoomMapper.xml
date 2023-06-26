@@ -144,4 +144,11 @@
         AND `sign` = #{sign,jdbcType=TINYINT}) AS TEMPTABLE
         LEFT JOIN room ON TEMPTABLE.room_id=room.id
   </select>
+    <select id="getRoomByDepart"
+            resultType="com.team.hospital.dto.RoomDto">
+      SELECT TEMPTABLE.id AS sid,room.id,NAME FROM
+        (SELECT room_id,id FROM `schedule`
+         WHERE department_id = #{departmentId,jdbcType=BIGINT}) AS TEMPTABLE
+          LEFT JOIN room ON TEMPTABLE.room_id=room.id
+    </select>
 </mapper>

@@ -43,7 +43,9 @@
         <el-row>
             <el-col :span=4>
                 就诊科室:
-                <el-select v-model="scheduleParam.departmentId" placeholder="请选择"
+                <el-select v-model="scheduleParam.departmentId"
+                           @change="loadDocter()"
+                           placeholder="请选择"
                            size="mini" style="width: 110px">
                     <el-option
                             v-for="item in departmentList"
@@ -134,9 +136,9 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="pagination.total">
     </el-pagination>
-    <el-dialog title="添加医生排期" :visible.sync="dialogFormVisible" @closed="closeDialog()">
+    <el-dialog title="添加医生排期" :visible.sync="dialogFormVisible" >
         <el-form :model="schedule" :rules="rules" size="mini" ref="schedule" label-width="100px">
-            <el-form-item label="排班日期" prop="inquiryTime">
+            <el-form-item label="排班日期" prop="inquiryTime" @change="loadDepart()">
                 <el-col>
                     <el-date-picker
                             :picker-options="pickerOptions"
@@ -147,8 +149,8 @@
                 </el-col>
             </el-form-item>
 
-            <el-form-item label="就诊科室" prop="departmentId">
-                <el-select v-model="schedule.departmentId" placeholder="请选择">
+            <el-form-item label="就诊科室" prop="departmentId" >
+                <el-select v-model="schedule.departmentId" placeholder="请选择" @change="loadDocter1()" >
                     <el-option
                             v-for="item in departmentList"
                             :key="item.id"
@@ -159,7 +161,7 @@
             </el-form-item>
 
             <el-form-item label="就诊医师" prop="userId">
-                <el-select v-model="schedule.userId" placeholder="请选择">
+                <el-select v-model="schedule.userId" placeholder="请选择" @change="getRoomByDepart()">
                     <el-option
                             v-for="item in docterList"
                             :key="item.id"
@@ -229,10 +231,10 @@
                         inquiryTime: ''
                     },
                     scheduleParam: {
-                        userId: null,
-                        departmentId: null,
-                        beginTime: null,
-                        endTime: null
+                        userId: '',
+                        departmentId: '',
+                        beginTime: '',
+                        endTime: ''
                     },
                     pagination: {
                         currentPage: 1,
@@ -259,6 +261,31 @@
                 }
             },
             methods: {
+                loadDepart() {
+                    axios.get("department/getAll").then((user) => {
+                        this.departmentList = user.data.data;
+                    }).catch((error) => {
+                        console.log("调用接口失败！" + error);
+                    });
+                },
+                loadDocter(){  //加载医生
+                    //调用后台接口
+                    axios.get("user/getUserByD?departmentId="+this.schedule.departmentId)
+                        .then((ret)=>{
+                            //获取返回的数据填充到vue的模型
+                            console.log(ret.data.data);
+                            this.docterList=ret.data.data;
+                        });
+                },
+                loadDocter1(){  //加载医生
+                    //调用后台接口
+                    axios.get(`user/getUserByDe?departmentId=`+this.schedule.departmentId)
+                        .then((ret)=>{
+                            //获取返回的数据填充到vue的模型
+                            console.log(ret.data.data);
+                            this.docterList=ret.data.data;
+                        });
+                },
                 getRegistryListByPage() {
                     this.scheduleParam.beginTime = this.value1[0];
                     this.scheduleParam.endTime = this.value1[1];
@@ -309,6 +336,7 @@
                                         callback: action => {
                                             this.closeDialog();
                                             this.all();
+                                            this.refreshPage();
                                         }
                                     });
                                 } else {
@@ -369,23 +397,27 @@
                     }).catch((error) => {
                         console.log("调用接口失败！" + error);
                     });
+                },
+                getRoomByDepart(){
+                    axios.get(`room/getRoomByDepart?departmentId=${this.schedule.departmentId}`).then((ret) => {
+                        this.roomList = ret.data.data;
+                    }).catch((error) => {
+                        console.log("调用接口失败！" + error);
+                    });
+                },
+                refreshPage() {
+                    location.reload(); // 刷新当前页面
                 }
             },
             mounted: function () {
-                axios.get("sysuser/getUserName2?userType=3").then((user) => {
+                axios.get("user/getUserByType?type=3").then((user) => {
                     this.docterList = user.data.data;
                 }).catch((error) => {
                     console.log("调用接口失败！" + error);
                 });
 
-                axios.get("department/allDepartment").then((user) => {
+                axios.get("department/getAll").then((user) => {
                     this.departmentList = user.data.data;
-                }).catch((error) => {
-                    console.log("调用接口失败！" + error);
-                });
-
-                axios.get("room/all").then((user) => {
-                    this.roomList = user.data.data;
                 }).catch((error) => {
                     console.log("调用接口失败！" + error);
                 });

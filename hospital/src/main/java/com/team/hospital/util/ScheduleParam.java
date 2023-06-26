@@ -2,7 +2,17 @@ package com.team.hospital.util;
 
 import java.util.Date;
 
-public class ScheduleParam extends PageParam{
+/**
+ * @Author: 林宇扬
+ * @Date: 2023/6/26 16:44
+ * @Java version: 1.8.0_361
+ * @Project U3_Project
+ * @Package com.team.hospital.util
+ * @Classname ScheduleParam
+ * @Created by Administrator
+ * @Description:NULL
+ */
+public class ScheduleParam extends PageParmeter{
     private Long departmentId;
     private Long userId;
     private Date beginTime;

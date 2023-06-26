@@ -63,6 +63,8 @@
                 </el-select>
             </el-col>
             <el-col :span=4>
+                <el-button @click="resetForm()" size="mini" style="width: 60px">清除
+                </el-button>
                 <el-button type="primary" @click="getRegistryListByPage()" size="mini" style="width: 100px">查询
                 </el-button>
             </el-col>
@@ -166,11 +168,11 @@
             el: '#div',
             data: {
                 searchForm: {  //搜索条件
-                    departmentId: '',
-                    patientId: '', //这个没用可以删除
-                    idCard: '',
-                    userId: '',
-                    status: ''
+                    departmentId: null,
+                    patientId: null, //这个没用可以删除
+                    idCard: null,
+                    userId: null,
+                    status: null
                 },
                 docterList:[],  //医生
                 statusList: [
@@ -273,15 +275,15 @@
                 },
                 loadDocter:function(){  //加载医生
                      //调用后台接口
-                     axios.get("user/getUserByD?departmentid="+this.searchForm.departmentId)
+                     axios.get("user/getUserByD?departmentId="+this.searchForm.departmentId)
                          .then((ret)=>{
                               //获取返回的数据填充到vue的模型
+                             console.log(ret.data.data);
                             this.docterList=ret.data.data;
                          });
                 },
                 sexParse(row, column, cellValue) {
                     let str = '';
-                    console.log(cellValue);
                     switch (cellValue) {
                         case '1':
                             str = "男";
@@ -291,6 +293,12 @@
                             break;
                     }
                     return str;
+                },
+                resetForm() {
+                    this.searchForm.idCard = ''; // 清空身份证号字段
+                    this.searchForm.departmentId = ''; // 清空就诊科室字段
+                    this.searchForm.userId = ''; // 清空挂号医师字段
+                    this.searchForm.status = ''; // 清空挂号单状态字段
                 }
             },
             //显示性别

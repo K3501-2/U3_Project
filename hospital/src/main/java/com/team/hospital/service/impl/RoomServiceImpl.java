@@ -7,6 +7,8 @@ import com.team.hospital.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @Author: 林宇扬
  * @Date: 2023/6/14 23:39
@@ -26,5 +28,11 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomDto getRoomByDtd(Long departmentId, Long uid, Byte sign) {
         return roomMapper.getRoomByDtd(departmentId, uid, sign);
+    }
+
+    //通过部门号查询房间
+    @Override
+    public List<RoomDto> getRoomByDepart(Long departmentId) {
+        return roomMapper.getRoomByDepart(departmentId);
     }
 }

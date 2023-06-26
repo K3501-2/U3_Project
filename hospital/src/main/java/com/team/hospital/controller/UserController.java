@@ -67,6 +67,18 @@ public class UserController {
         }
     }
 
+    //用户注销
+    @RequestMapping("exit")
+    @ResponseBody
+    public Result exit(HttpSession session, HttpServletRequest request){
+        // 从session中移除用户信息
+        session.removeAttribute("userInfo");
+        // 设置登录状态为false
+        request.getSession().setAttribute("loggedIn", false);
+        // 返回注销成功的提示信息
+        return new Result<>("1", "注销成功");
+    }
+
     //分页获取用户信息
     //userList?page=页码&pageSize=页大小
     //获取所有用户控制器
@@ -152,7 +164,7 @@ public class UserController {
     @ResponseBody
     public Result<List<UserDto>> getUserByD(Long departmentId){
         try {
-            List<UserDto> userList = this.userService.getUsersByDe(departmentId);
+            List<UserDto> userList = this.userService.getUsersByD(departmentId);
             return new Result<>("1", "通过科室查寻医生成功", userList);
         }catch (Exception e){
             e.printStackTrace();
@@ -160,6 +172,18 @@ public class UserController {
         }
     }
 
+    //通过科室医生  getUserByD?departmentid=值
+    @GetMapping("getUserByDe")//强制只能使用get请求
+    @ResponseBody
+    public Result<List<UserDto>> getUserByDe(Long departmentId){
+        try {
+            List<UserDto> userList = this.userService.getUsersByDe(departmentId);
+            return new Result<>("1", "通过科室查寻医生成功", userList);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result<>("0", "通过科室查询医生失败");
+        }
+    }
     //通过类型查询相关人员 1管理 2挂号 3医生 4，收银员 5.药师
     @RequestMapping("getUserByType")
     @ResponseBody

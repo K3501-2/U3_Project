@@ -33,6 +33,9 @@ public interface UserService {
     public List<SysUsers> getUsersByDepart(Long departmentId, Byte sign);
 
     //通过科室查寻医生
+    public List<UserDto> getUsersByD(Long departmentId);
+
+    //通过科室查寻医生
     public List<UserDto> getUsersByDe(Long departmentId);
 
     //通过类型查询相关人员 1管理 2挂号 3医生 4，收银员 5.药师

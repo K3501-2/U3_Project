@@ -29,4 +29,9 @@ public interface RoomMapper {
             @Param(value = "uid") Long uid,
             @Param(value = "sign") Byte sign
     );
+
+    //根据部门查询房间
+    List<RoomDto> getRoomByDepart(
+            @Param(value = "departmentId") Long departmentId
+    );
 }

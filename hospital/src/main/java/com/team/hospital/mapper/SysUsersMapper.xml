@@ -232,9 +232,17 @@
   <select id="getUsersByD"
           resultType="com.team.hospital.dto.UserDto"
           parameterType="long">
-    SELECT id,user_Name AS userName FROM sys_users
+    SELECT id,user_Name AS userName,
+           department_id AS departmentId FROM sys_users
         WHERE id IN (SELECT user_id
                     FROM `schedule` WHERE department_id=#{departmentId,jdbcType=BIGINT})
+  </select>
+  <select id="getUsersByDe"
+          resultType="com.team.hospital.dto.UserDto"
+          parameterType="long">
+    SELECT id,user_Name AS userName,
+           department_id AS departmentId FROM sys_users
+    WHERE department_id=#{departmentId,jdbcType=BIGINT}
   </select>
   <!--通过类型找医生-->
   <select id="getUsers" parameterType="Byte" resultType="com.team.hospital.dto.UserDto">

@@ -327,7 +327,7 @@
     SELECT `registry`.`id`,
         `patient`.`name`,
         `patient`.`sex`,
-        `patient`.`id_card` AS cardid,
+        `patient`.`id_card` AS cardId,
         `department`.`name` AS dname,
         `registry`.`created_time` AS createTime,
         `registry`.`registry_time` AS  regTime,

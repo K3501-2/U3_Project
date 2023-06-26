@@ -15,6 +15,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @Author: 林宇扬
+ * @Date: 2023/6/26 16:53
+ * @Java version: 1.8.0_361
+ * @Project U3_Project
+ * @Package com.team.hospital.controller
+ * @Classname ScheduleController
+ * @Created by Administrator
+ * @Description:NULL
+ */
 @Controller
 @RequestMapping("/schedule")
 public class ScheduleController {
@@ -51,3 +61,4 @@ public class ScheduleController {
         return new Result("0","医生排期删除失败");
     }
 }
+

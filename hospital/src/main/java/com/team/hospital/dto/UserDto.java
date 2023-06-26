@@ -15,6 +15,8 @@ public class UserDto {
 
     private String userName;
 
+    private Long departmentId;
+
     public Long getId() {
         return id;
     }
@@ -29,5 +31,13 @@ public class UserDto {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 }

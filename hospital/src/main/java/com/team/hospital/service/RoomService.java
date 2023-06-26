@@ -2,6 +2,8 @@ package com.team.hospital.service;
 
 import com.team.hospital.dto.RoomDto;
 
+import java.util.List;
+
 /**
  * @Author: 林宇扬
  * @Date: 2023/6/14 23:36
@@ -15,4 +17,7 @@ import com.team.hospital.dto.RoomDto;
 public interface RoomService {
     //查询就诊房间
     public RoomDto getRoomByDtd(Long departmentId, Long uid, Byte sign);
+
+    //根据部门查询房间
+    public List<RoomDto> getRoomByDepart(Long departmentId);
 }
