@@ -173,7 +173,7 @@ public class UserController {
     }
 
     //通过科室医生  getUserByD?departmentid=值
-    @GetMapping("getUserByDe")//强制只能使用get请求
+    @RequestMapping("getUserByDe")//强制只能使用get请求
     @ResponseBody
     public Result<List<UserDto>> getUserByDe(Long departmentId){
         try {

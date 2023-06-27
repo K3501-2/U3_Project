@@ -58,7 +58,10 @@
 
             <el-col :span=4>
                 挂号医师:
-                <el-select v-model="scheduleParam.userId" placeholder="请选择" size="mini" style="width: 110px">
+                <el-select v-model="scheduleParam.userId"
+                           @change="loadDocter1()"
+                           placeholder="请选择" size="mini"
+                           style="width: 110px" >
                     <el-option
                             v-for="item in docterList"
                             :key="item.id"
@@ -270,7 +273,7 @@
                 },
                 loadDocter(){  //加载医生
                     //调用后台接口
-                    axios.get("user/getUserByD?departmentId="+this.schedule.departmentId)
+                    axios.get("user/getUserByDe?departmentId="+this.scheduleParam.departmentId)
                         .then((ret)=>{
                             //获取返回的数据填充到vue的模型
                             console.log(ret.data.data);
@@ -279,7 +282,7 @@
                 },
                 loadDocter1(){  //加载医生
                     //调用后台接口
-                    axios.get(`user/getUserByDe?departmentId=`+this.schedule.departmentId)
+                    axios.get("user/getUsersByDe?departmentId="+this.schedule.departmentId)
                         .then((ret)=>{
                             //获取返回的数据填充到vue的模型
                             console.log(ret.data.data);
